@@ -1,0 +1,432 @@
+<title>TrustMyPetrol — MVP Screen Mockups</title>
+<style>
+  :root{
+    --petrol:#0E6B72; --petrol-deep:#0A4E54; --amber:#E8A13D;
+    --ink:#20282A; --muted:#5B6A6C; --paper:#F2F5F4; --card:#FFFFFF; --line:#D8E0DF;
+    --good:#2E8B57; --warn:#D97E2B; --bad:#C0442E;
+    --shadow:0 18px 40px rgba(14,58,62,.16);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --ink:#E4EBEA; --muted:#93A5A6; --paper:#131A1B; --card:#1C2527;
+           --line:#2C393B; --petrol:#3BA6AE; --petrol-deep:#0A4E54;
+           --shadow:0 18px 40px rgba(0,0,0,.5); }
+  }
+  :root[data-theme="dark"]{ --ink:#E4EBEA; --muted:#93A5A6; --paper:#131A1B; --card:#1C2527;
+           --line:#2C393B; --petrol:#3BA6AE; --petrol-deep:#0A4E54;
+           --shadow:0 18px 40px rgba(0,0,0,.5); }
+  :root[data-theme="light"]{ --ink:#20282A; --muted:#5B6A6C; --paper:#F2F5F4; --card:#FFFFFF;
+           --line:#D8E0DF; --petrol:#0E6B72; --petrol-deep:#0A4E54;
+           --shadow:0 18px 40px rgba(14,58,62,.16); }
+
+  *{box-sizing:border-box}
+  body{background:var(--paper); color:var(--ink);
+    font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    margin:0; padding:0 24px 96px;}
+  .wrap{max-width:1160px; margin:0 auto;}
+
+  header.page{padding:72px 0 24px; border-bottom:1px solid var(--line); margin-bottom:56px;}
+  .eyebrow{font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--petrol); font-weight:600;}
+  h1{font-size:clamp(30px,4.5vw,44px); line-height:1.12; margin:.35em 0 .3em; text-wrap:balance; font-weight:700;}
+  header.page p{max-width:62ch; color:var(--muted); margin:0;}
+
+  section.screen{display:grid; grid-template-columns:minmax(300px,390px) 1fr; gap:56px;
+    align-items:start; padding:56px 0; border-bottom:1px solid var(--line);}
+  section.screen:nth-of-type(even){grid-template-columns:1fr minmax(300px,390px);}
+  section.screen:nth-of-type(even) .phone{order:2}
+  @media (max-width:840px){
+    section.screen, section.screen:nth-of-type(even){grid-template-columns:1fr;}
+    section.screen:nth-of-type(even) .phone{order:0}
+    .phone{margin:0 auto;}
+  }
+  .notes h2{font-size:24px; margin:0 0 6px; text-wrap:balance;}
+  .notes .sub{color:var(--muted); margin:0 0 22px; max-width:58ch;}
+  .callout{display:flex; gap:14px; padding:14px 0; border-top:1px solid var(--line);}
+  .callout .key{flex:none; width:26px; height:26px; border-radius:50%; background:var(--petrol);
+    color:#fff; font-size:13px; font-weight:700; display:grid; place-items:center; margin-top:2px;}
+  .callout .key.amber{background:var(--amber); color:#3A2A0C;}
+  .callout h3{font-size:15px; margin:0 0 2px; font-weight:650;}
+  .callout p{margin:0; font-size:14.5px; color:var(--muted); max-width:52ch;}
+
+  /* ---------- phone frame ---------- */
+  .phone{width:min(390px,100%); background:#101416; border-radius:44px; padding:12px;
+    box-shadow:var(--shadow); position:sticky; top:32px;}
+  .glass{background:#F6F8F7; border-radius:34px; overflow:hidden; position:relative;
+    color:#212A2C; font-size:14px; line-height:1.45;}
+  .status{display:flex; justify-content:space-between; padding:10px 22px 4px; font-size:12px;
+    font-weight:600; color:#212A2C;}
+  .appbody{padding:0 0 0;}
+  .anno{position:absolute; width:24px; height:24px; border-radius:50%; background:var(--petrol);
+    color:#fff; font-size:12px; font-weight:700; display:grid; place-items:center;
+    box-shadow:0 2px 8px rgba(0,0,0,.35); z-index:5;}
+  .anno.amber{background:var(--amber); color:#3A2A0C;}
+
+  /* in-app atoms (fixed light palette — the app UI itself) */
+  .chip{display:inline-flex; align-items:center; gap:5px; border:1px solid #CBD6D4; border-radius:999px;
+    padding:4px 11px; font-size:12px; font-weight:600; color:#33484A; background:#fff;}
+  .chip.on{background:#0E6B72; border-color:#0E6B72; color:#fff;}
+  .chip.sig{background:#EDF3F2; border-color:transparent;}
+  .chip.sig.on{background:#0E6B72; color:#fff;}
+  .badge{display:inline-flex; align-items:center; gap:4px; font-size:10.5px; font-weight:700;
+    padding:2px 8px; border-radius:999px; letter-spacing:.02em;}
+  .badge.geo{background:#E2F1E8; color:#1F6B42;}
+  .badge.unv{background:#F0EDE6; color:#8A7A4E;}
+  .btn{display:block; text-align:center; background:#0E6B72; color:#fff; font-weight:700;
+    border-radius:12px; padding:13px; font-size:15px;}
+  .btn.ghost{background:#fff; color:#0E6B72; border:1.5px solid #0E6B72;}
+  .card{background:#fff; border:1px solid #E3E9E8; border-radius:14px; padding:14px;}
+  .h-sm{font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:#7B8A8C;
+    font-weight:700; margin:0 0 8px;}
+  .num{font-variant-numeric:tabular-nums;}
+
+  .navbar{display:flex; border-top:1px solid #E3E9E8; background:#fff; padding:8px 6px 14px;}
+  .navbar div{flex:1; text-align:center; font-size:10px; font-weight:600; color:#8AA0A2;}
+  .navbar div.on{color:#0E6B72;}
+  .navbar svg{display:block; margin:0 auto 2px;}
+
+  .scorebar{height:7px; border-radius:4px; background:#E8EEED; overflow:hidden; flex:1;}
+  .scorebar i{display:block; height:100%; border-radius:4px;}
+
+  footer{padding-top:48px; color:var(--muted); font-size:14px; max-width:70ch;}
+  footer code{background:var(--card); border:1px solid var(--line); border-radius:5px; padding:1px 6px; font-size:13px;}
+</style>
+
+<div class="wrap">
+<header class="page">
+  <div class="eyebrow">TrustMyPetrol · MVP design spec</div>
+  <h1>Four screens that turn fuel complaints into evidence</h1>
+  <p>Key flows for the v1 Android app: find a trustworthy pump, read its record, file a
+  geo-verified report, and escalate it into a formal government grievance. Numbered
+  markers on each phone map to the design decisions beside it.</p>
+</header>
+
+<!-- ============ 1 · MAP HOME ============ -->
+<section class="screen">
+  <div class="phone">
+    <div class="glass">
+      <div class="status"><span>9:41</span><span>▲ ▮ ▮</span></div>
+      <div class="appbody" style="position:relative;">
+        <div style="padding:8px 16px 10px;">
+          <div style="display:flex; align-items:center; gap:8px; background:#fff; border:1px solid #E3E9E8; border-radius:12px; padding:11px 14px; color:#8AA0A2; font-size:14px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8AA0A2" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            Search pumps in Pune…
+          </div>
+          <div style="display:flex; gap:7px; margin-top:10px; overflow:hidden;">
+            <span class="chip on">All</span><span class="chip">E10 available</span>
+            <span class="chip">Premium (non-E20)</span><span class="chip">Open now</span>
+          </div>
+        </div>
+        <div class="anno" style="top:118px; left:10px;">1</div>
+        <!-- map -->
+        <div style="position:relative; height:342px; background:#E9EFEA; overflow:hidden;">
+          <svg viewBox="0 0 390 342" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <rect width="390" height="342" fill="#E9EFEA"/>
+            <path d="M-10 70 C 90 60, 160 110, 250 95 S 380 60, 410 75" stroke="#fff" stroke-width="13" fill="none"/>
+            <path d="M-10 70 C 90 60, 160 110, 250 95 S 380 60, 410 75" stroke="#D8E2DA" stroke-width="1.5" fill="none"/>
+            <path d="M60 -10 C 70 80, 40 180, 90 250 S 120 330, 110 360" stroke="#fff" stroke-width="11" fill="none"/>
+            <path d="M300 -10 C 280 90, 330 160, 290 260 S 270 330, 280 360" stroke="#fff" stroke-width="11" fill="none"/>
+            <path d="M-10 210 C 100 200, 190 240, 300 218 S 380 210, 410 215" stroke="#fff" stroke-width="14" fill="none"/>
+            <path d="M-10 300 L 410 285" stroke="#fff" stroke-width="9" fill="none"/>
+            <rect x="130" y="130" width="60" height="44" rx="4" fill="#DCE6DE"/>
+            <rect x="210" y="250" width="70" height="40" rx="4" fill="#DCE6DE"/>
+            <rect x="30" y="110" width="40" height="60" rx="4" fill="#DCE6DE"/>
+          </svg>
+          <!-- pins -->
+          <div style="position:absolute; top:56px; left:96px;  width:34px;height:34px;border-radius:50% 50% 50% 4px;transform:rotate(-45deg);background:#2E8B57;border:2.5px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.25);"><span style="transform:rotate(45deg);display:grid;place-items:center;height:100%;color:#fff;font-size:11px;font-weight:800;" class="num">86</span></div>
+          <div style="position:absolute; top:150px; left:238px; width:34px;height:34px;border-radius:50% 50% 50% 4px;transform:rotate(-45deg);background:#D97E2B;border:2.5px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.25);"><span style="transform:rotate(45deg);display:grid;place-items:center;height:100%;color:#fff;font-size:11px;font-weight:800;" class="num">58</span></div>
+          <div style="position:absolute; top:214px; left:70px;  width:34px;height:34px;border-radius:50% 50% 50% 4px;transform:rotate(-45deg);background:#C0442E;border:2.5px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.25);"><span style="transform:rotate(45deg);display:grid;place-items:center;height:100%;color:#fff;font-size:11px;font-weight:800;" class="num">31</span></div>
+          <div style="position:absolute; top:96px; left:318px; width:30px;height:30px;border-radius:50% 50% 50% 4px;transform:rotate(-45deg);background:#9DB0AE;border:2.5px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.25);"><span style="transform:rotate(45deg);display:grid;place-items:center;height:100%;color:#fff;font-size:13px;font-weight:800;">·</span></div>
+          <div class="anno" style="top:120px; right:14px;">2</div>
+          <div class="anno" style="bottom:64px; left:52px;">3</div>
+        </div>
+        <!-- peek card -->
+        <div style="margin:-26px 14px 12px; position:relative; z-index:3;" class="card">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:8px;">
+            <strong style="font-size:15px;">Shree Ganesh Fuels</strong>
+            <span class="num" style="font-weight:800; color:#D97E2B; font-size:17px;">58</span>
+          </div>
+          <div style="color:#7B8A8C; font-size:12.5px;">IOCL · Baner Rd · 1.2 km · Dealer 41-C-118</div>
+          <div style="display:flex; gap:6px; margin-top:8px;">
+            <span class="badge geo">✓ 23 geo-verified reports</span>
+            <span class="badge unv">E20 only</span>
+          </div>
+        </div>
+        <div class="navbar">
+          <div class="on"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#0E6B72" stroke-width="2"><path d="M12 21s-7-6.1-7-11a7 7 0 1 1 14 0c0 4.9-7 11-7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>Map</div>
+          <div><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#8AA0A2" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Pumps</div>
+          <div><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#8AA0A2" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Report</div>
+          <div><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#8AA0A2" stroke-width="2"><path d="M4 20c1.5-3.5 4.5-5 8-5s6.5 1.5 8 5"/><circle cx="12" cy="8" r="4"/></svg>You</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="eyebrow">Screen 01</div>
+    <h2>Map home — trust at a glance</h2>
+    <p class="sub">The daily-use surface. Even users with no complaint open the app to pick
+    where to fill up, which is what keeps the platform alive between incidents.</p>
+    <div class="callout"><div class="key">1</div><div>
+      <h3>Blend filters are the retention hook</h3>
+      <p>"Premium (non-E20)" and "E10 available" answer the question drivers actually ask
+      every week. Filters read from crowd-updated <code>pumps.blends</code>.</p></div></div>
+    <div class="callout"><div class="key">2</div><div>
+      <h3>Pins carry the score, color carries the verdict</h3>
+      <p>Green ≥ 80, amber 50–79, red &lt; 50. Grey dot = fewer than 5 weighted reports —
+      shown as "Not enough data", never a bad score. No pump is tarred by one review.</p></div></div>
+    <div class="callout"><div class="key">3</div><div>
+      <h3>Every pin is a real dealer</h3>
+      <p>Pumps are seeded from OMC locator lists with dealer codes, so the peek card shows
+      the code that a formal complaint will need later.</p></div></div>
+  </div>
+</section>
+
+<!-- ============ 2 · PUMP PAGE ============ -->
+<section class="screen">
+  <div class="phone">
+    <div class="glass">
+      <div class="status"><span>9:41</span><span>▲ ▮ ▮</span></div>
+      <div class="appbody" style="position:relative; padding-bottom:14px;">
+        <div style="padding:6px 16px 12px; border-bottom:1px solid #E3E9E8;">
+          <div style="font-size:12px; color:#7B8A8C;">← Back · IOCL · Dealer 41-C-118</div>
+          <div style="font-size:19px; font-weight:750; margin-top:3px;">Shree Ganesh Fuels, Baner Rd</div>
+          <div style="display:flex; gap:6px; margin-top:8px;">
+            <span class="chip sig on">E20</span><span class="chip sig">E10 ✕</span>
+            <span class="chip sig">Premium ✕</span><span class="chip sig">CNG ✕</span>
+          </div>
+        </div>
+        <div style="display:flex; gap:14px; padding:14px 16px; align-items:center;">
+          <div style="position:relative; width:86px; height:86px; flex:none;">
+            <svg viewBox="0 0 86 86" width="86" height="86">
+              <circle cx="43" cy="43" r="37" fill="none" stroke="#E8EEED" stroke-width="9"/>
+              <circle cx="43" cy="43" r="37" fill="none" stroke="#D97E2B" stroke-width="9"
+                stroke-linecap="round" stroke-dasharray="134.8 232.5" transform="rotate(-90 43 43)"/>
+            </svg>
+            <div style="position:absolute; inset:0; display:grid; place-items:center;">
+              <div style="text-align:center;"><div class="num" style="font-size:23px; font-weight:800; line-height:1;">58</div>
+              <div style="font-size:9.5px; color:#7B8A8C; font-weight:700;">MIXED</div></div>
+            </div>
+          </div>
+          <div style="flex:1;">
+            <div class="h-sm" style="margin-bottom:6px;">Last 90 days · 31 reports</div>
+            <div style="display:flex; align-items:center; gap:8px; font-size:12px; margin-bottom:5px;"><span style="width:118px;">Mileage drop</span><span class="scorebar"><i style="width:64%; background:#C0442E;"></i></span><span class="num" style="color:#7B8A8C;">14</span></div>
+            <div style="display:flex; align-items:center; gap:8px; font-size:12px; margin-bottom:5px;"><span style="width:118px;">Short-fuelling</span><span class="scorebar"><i style="width:27%; background:#D97E2B;"></i></span><span class="num" style="color:#7B8A8C;">6</span></div>
+            <div style="display:flex; align-items:center; gap:8px; font-size:12px;"><span style="width:118px;">Good experience</span><span class="scorebar"><i style="width:41%; background:#2E8B57;"></i></span><span class="num" style="color:#7B8A8C;">9</span></div>
+          </div>
+        </div>
+        <div class="anno" style="top:150px; left:8px;">1</div>
+        <div style="padding:0 16px;">
+          <div class="card" style="margin-bottom:10px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <strong style="font-size:13.5px;">Rider_Pune21 · 2 days ago</strong>
+              <span class="badge geo">✓ Geo-verified · 38 m</span>
+            </div>
+            <div style="display:flex; gap:5px; margin:8px 0;">
+              <span class="chip sig" style="font-size:11px;">Mileage drop</span>
+              <span class="chip sig" style="font-size:11px;">No E20 labelling</span>
+            </div>
+            <p style="margin:0; font-size:13px; color:#4A5A5C;">Activa dropped from 48 to
+            39 km/l after two fills here. No blend board on any dispenser.</p>
+            <div style="display:flex; gap:6px; margin-top:9px;">
+              <div style="width:46px; height:46px; border-radius:8px; background:linear-gradient(135deg,#B9C8C4,#8FA5A0);"></div>
+              <div style="width:46px; height:46px; border-radius:8px; background:linear-gradient(135deg,#C9C2B2,#9A917C);"></div>
+            </div>
+          </div>
+          <div class="anno" style="top:284px; right:8px;">2</div>
+          <div class="card" style="margin-bottom:12px; background:#F4F7F6;">
+            <div class="h-sm" style="color:#0E6B72;">Dealer response · verified owner</div>
+            <p style="margin:0; font-size:12.5px; color:#4A5A5C;">Blend boards were installed
+            on 3 Jul after this report. Density register is available on request — S. Patil, dealer.</p>
+          </div>
+          <div class="anno amber" style="top:408px; left:8px;">3</div>
+          <a class="btn">Report an issue at this pump</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="eyebrow">Screen 02</div>
+    <h2>Pump page — the public record</h2>
+    <p class="sub">Also rendered server-side on the web app, so "&lt;pump name&gt; reviews"
+    searches land here. This page is the acquisition channel.</p>
+    <div class="callout"><div class="key">1</div><div>
+      <h3>Signals, not stars</h3>
+      <p>The breakdown shows counts of observable signals from a fixed vocabulary. Aggregates
+      of "14 riders reported mileage drop" are defensible; "this pump adulterates" is not.
+      Positive signals are counted with equal weight.</p></div></div>
+    <div class="callout"><div class="key">2</div><div>
+      <h3>Verification is visible</h3>
+      <p>The geo-verified badge shows the capture distance from the pump. Unverified reports
+      still publish, marked and down-weighted — honesty about confidence builds trust.</p></div></div>
+    <div class="callout"><div class="key amber">3</div><div>
+      <h3>Dealer right-of-reply</h3>
+      <p>A claimed pump gets one response per report, visually distinct. This is the main
+      defamation mitigant and makes the platform read as fair, not adversarial.</p></div></div>
+  </div>
+</section>
+
+<!-- ============ 3 · REPORT FLOW ============ -->
+<section class="screen">
+  <div class="phone">
+    <div class="glass">
+      <div class="status"><span>9:41</span><span>▲ ▮ ▮</span></div>
+      <div class="appbody" style="position:relative; padding-bottom:14px;">
+        <div style="padding:6px 16px 10px;">
+          <div style="font-size:12px; color:#7B8A8C;">Report · Shree Ganesh Fuels</div>
+          <div style="display:flex; gap:5px; margin-top:7px;">
+            <span style="flex:1;height:4px;border-radius:2px;background:#0E6B72;"></span>
+            <span style="flex:1;height:4px;border-radius:2px;background:#0E6B72;"></span>
+            <span style="flex:1;height:4px;border-radius:2px;background:#E3E9E8;"></span>
+          </div>
+        </div>
+        <!-- camera -->
+        <div style="position:relative; margin:4px 16px; height:238px; border-radius:16px; overflow:hidden; background:linear-gradient(160deg,#3E4A4C 0%,#57666A 55%,#2E383A 100%);">
+          <div style="position:absolute; inset:0; display:grid; place-items:center; color:#C6D2D0; font-size:12px;">
+            <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#C6D2D0" stroke-width="1.6"><path d="M4 8h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13" r="3.4"/></svg>
+          </div>
+          <div style="position:absolute; top:10px; left:10px; display:flex; gap:6px;">
+            <span class="badge geo" style="background:rgba(226,241,232,.95);">✓ GPS locked · 38 m from pump</span>
+          </div>
+          <div style="position:absolute; top:10px; right:10px;">
+            <span class="badge" style="background:rgba(255,255,255,.9); color:#4A5A5C;">8 Jul · 9:41 am</span>
+          </div>
+          <div style="position:absolute; bottom:12px; left:0; right:0; display:grid; place-items:center;">
+            <div style="width:54px; height:54px; border-radius:50%; border:4px solid #fff; background:rgba(255,255,255,.25);"></div>
+          </div>
+        </div>
+        <div class="anno" style="top:96px; right:8px;">1</div>
+        <div style="padding:12px 16px 0;">
+          <p class="h-sm">What did you observe? · pick all that apply</p>
+          <div style="display:flex; flex-wrap:wrap; gap:7px;">
+            <span class="chip sig on">Mileage drop</span><span class="chip sig">Engine trouble</span>
+            <span class="chip sig on">No E20 labelling</span><span class="chip sig">Short-fuelling</span>
+            <span class="chip sig">Meter issue</span><span class="chip sig">Density check refused</span>
+            <span class="chip sig">Overcharged</span><span class="chip sig" style="border:1px solid #BFD8C9; color:#1F6B42;">Good experience 👍</span>
+          </div>
+          <div class="anno" style="top:330px; left:8px;">2</div>
+          <div style="display:flex; gap:8px; margin-top:12px;">
+            <div class="card" style="flex:1; padding:10px 12px;"><div class="h-sm" style="margin:0 0 2px;">Litres</div><span class="num" style="font-weight:700;">4.96</span></div>
+            <div class="card" style="flex:1; padding:10px 12px;"><div class="h-sm" style="margin:0 0 2px;">Amount ₹</div><span class="num" style="font-weight:700;">520</span></div>
+            <div class="card" style="flex:1; padding:10px 12px;"><div class="h-sm" style="margin:0 0 2px;">Odo km</div><span class="num" style="font-weight:700;">31,204</span></div>
+          </div>
+          <div class="anno amber" style="top:432px; right:8px;">3</div>
+          <a class="btn" style="margin-top:14px;">Continue</a>
+          <p style="font-size:11px; color:#8AA0A2; margin:9px 0 0; text-align:center;">
+            Photos are taken live in-app. Location and time are recorded at capture.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="eyebrow">Screen 03</div>
+    <h2>Report flow — evidence by construction</h2>
+    <p class="sub">Three steps: capture, classify, confirm. The camera is the flow —
+    there is no gallery picker, so every photo is born verified or not at all.</p>
+    <div class="callout"><div class="key">1</div><div>
+      <h3>Verification happens silently at capture</h3>
+      <p>GPS fix, distance to pump, mock-location flag, and timestamp are recorded when the
+      shutter fires. Within 150 m and uploaded inside 10 minutes → <code>geo_verified</code>.
+      Fails? The report still files, just unverified — never silently discarded.</p></div></div>
+    <div class="callout"><div class="key">2</div><div>
+      <h3>Chips replace the rant box</h3>
+      <p>One tap per observable fact. Free text comes later, optional, capped and moderated —
+      and never feeds the score. "Good experience" sits in the same row: this is a trust
+      index, not a complaint wall.</p></div></div>
+    <div class="callout"><div class="key amber">3</div><div>
+      <h3>Fill details seed the mileage tracker</h3>
+      <p>Litres, amount, odometer — optional now, but they make phase 2 (km/l trends per pump)
+      work from day one of data collection.</p></div></div>
+  </div>
+</section>
+
+<!-- ============ 4 · COMPLAINT ASSISTANT ============ -->
+<section class="screen">
+  <div class="phone">
+    <div class="glass">
+      <div class="status"><span>9:41</span><span>▲ ▮ ▮</span></div>
+      <div class="appbody" style="position:relative; padding:6px 16px 16px;">
+        <div style="font-size:12px; color:#7B8A8C;">Your report · published 2 days ago</div>
+        <div style="font-size:18px; font-weight:750; margin:3px 0 12px;">File a formal complaint</div>
+        <div class="card" style="margin-bottom:12px;">
+          <div class="h-sm">Drafted grievance · ready to paste</div>
+          <p style="margin:0; font-size:12.5px; color:#4A5A5C; line-height:1.55;">
+            Complaint regarding fuel quality at <strong>Shree Ganesh Fuels, Baner Road,
+            Pune (IOCL dealer 41-C-118)</strong>. On 6 Jul 2026 at 9:41 am I purchased
+            4.96 L of E20 petrol (₹520). Observed: significant mileage drop, no statutory
+            E20 blend labelling on dispensers. Geo-tagged photographic evidence attached
+            (2 photos, capture-verified within 38 m of the outlet)…</p>
+          <div style="display:flex; gap:8px; margin-top:10px;">
+            <a class="btn ghost" style="flex:1; padding:9px; font-size:13px;">Copy text</a>
+            <a class="btn ghost" style="flex:1; padding:9px; font-size:13px;">Evidence ZIP ↓</a>
+          </div>
+        </div>
+        <div class="anno" style="top:88px; right:6px;">1</div>
+        <p class="h-sm">Where to file</p>
+        <div class="card" style="margin-bottom:8px; border:1.5px solid #0E6B72;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div><strong style="font-size:14px;">CPGRAMS (pgportal.gov.in)</strong>
+              <div style="font-size:11.5px; color:#7B8A8C;">Routes to Ministry of Petroleum · 30-day target</div></div>
+            <span style="color:#0E6B72; font-weight:800;">→</span>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div><strong style="font-size:14px;">IndianOil dealer portal</strong>
+              <div style="font-size:11.5px; color:#7B8A8C;">Direct to the OMC that licenses this pump</div></div>
+            <span style="color:#8AA0A2; font-weight:800;">→</span>
+          </div>
+        </div>
+        <div class="anno" style="top:262px; left:6px;">2</div>
+        <div class="card" style="background:#F4F7F6;">
+          <div class="h-sm">After you file</div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <div style="flex:1; background:#fff; border:1px dashed #BFCCCA; border-radius:10px; padding:9px 12px; font-size:12.5px; color:#8AA0A2;">Paste CPGRAMS registration no.</div>
+            <a class="btn" style="padding:9px 14px; font-size:13px;">Track</a>
+          </div>
+          <p style="margin:9px 0 0; font-size:11.5px; color:#7B8A8C;">We'll remind you at 30
+          days if there's no response, with the DPG escalation path.</p>
+        </div>
+        <div class="anno amber" style="bottom:74px; right:6px;">3</div>
+        <div class="card" style="margin-top:12px; background:#FCF6EA; border-color:#EAD9B4;">
+          <div style="display:flex; gap:9px;">
+            <span style="font-size:16px;">⚖️</span>
+            <p style="margin:0; font-size:11.5px; color:#6B5B34; line-height:1.5;">
+              <strong>Know your rights:</strong> every customer can ask for the 5-litre
+              measure check and the filter-paper density test at the pump, free of charge.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="eyebrow">Screen 04</div>
+    <h2>Complaint assistant — prepare, don't submit</h2>
+    <p class="sub">CPGRAMS has no public third-party API, and automating a citizen's
+    grievance is legally murky anyway. So the app does everything except press the button.</p>
+    <div class="callout"><div class="key">1</div><div>
+      <h3>The draft does the hard part</h3>
+      <p>Correct dealer code, OMC, timestamps, and signals — the details that get real
+      grievances actioned instead of closed as "insufficient information". Evidence photos
+      ship as a ZIP from the private bucket.</p></div></div>
+    <div class="callout"><div class="key">2</div><div>
+      <h3>Loop closure is the differentiator</h3>
+      <p>Users paste their registration number back; the app tracks it and nudges at the
+      30-day CPGRAMS target with the escalation path. Government portals leave this loop
+      open — closing it is why people will use us instead.</p></div></div>
+    <div class="callout"><div class="key amber">3</div><div>
+      <h3>Rights education rides along</h3>
+      <p>The measure-check and density-test rights are the single highest-leverage fact most
+      drivers don't know. Surfacing it here turns a complaint into on-the-spot verification
+      next time.</p></div></div>
+  </div>
+</section>
+
+<footer>
+  <p>Companion to <code>docs/MVP-ARCHITECTURE.md</code> in the TrustMyPetrol repo — stack,
+  data model, trust-score maths, photo-verification pipeline, and the six-week build order
+  behind these screens. In-app UI is shown in its fixed light palette; page chrome follows
+  your theme.</p>
+</footer>
+</div>

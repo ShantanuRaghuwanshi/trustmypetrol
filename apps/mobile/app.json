@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "TrustMyPetrol",
+    "slug": "trustmypetrol",
+    "version": "0.1.0",
+    "scheme": "trustmypetrol",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": false,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Photos are taken live in-app so reports carry verifiable evidence.",
+        "NSLocationWhenInUseUsageDescription": "Your location at capture time verifies the report was made at the pump."
+      }
+    },
+    "android": {
+      "package": "in.trustmypetrol.app",
+      "permissions": ["CAMERA", "ACCESS_FINE_LOCATION"]
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Photos are taken live in-app so reports carry verifiable evidence."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Your location at capture time verifies the report was made at the pump."
+        }
+      ]
+    ],
+    "experiments": { "typedRoutes": false }
+  }
+}
