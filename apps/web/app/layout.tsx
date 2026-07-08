@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import AuthButton from "@/components/AuthButton";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -24,12 +25,33 @@ export default function RootLayout({
             <Link href="/" className="brand">
               ⛽ TrustMyPetrol
             </Link>
-            <span className="tagline">
-              Fuel quality, crowd-verified · Pune pilot
-            </span>
+            <nav className="site-nav">
+              <Link href="/">Pumps</Link>
+              <Link href="/rights">Your rights</Link>
+              <AuthButton />
+            </nav>
           </div>
         </header>
         <main className="container">{children}</main>
+        <footer className="site-footer">
+          <div className="inner">
+            <span>
+              Pune pilot · Scores from geo-verified reports over the last 90
+              days
+            </span>
+            <span>
+              Fuel quality issue?{" "}
+              <Link href="/rights">Know your rights</Link> · escalate via{" "}
+              <a
+                href="https://pgportal.gov.in/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                CPGRAMS
+              </a>
+            </span>
+          </div>
+        </footer>
       </body>
     </html>
   );

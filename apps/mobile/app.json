@@ -16,7 +16,10 @@
     },
     "android": {
       "package": "in.trustmypetrol.app",
-      "permissions": ["CAMERA", "ACCESS_FINE_LOCATION"]
+      "permissions": [
+        "CAMERA",
+        "ACCESS_FINE_LOCATION"
+      ]
     },
     "plugins": [
       "expo-router",
@@ -31,8 +34,11 @@
         {
           "locationWhenInUsePermission": "Your location at capture time verifies the report was made at the pump."
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
-    "experiments": { "typedRoutes": false }
+    "experiments": {
+      "typedRoutes": false
+    }
   }
 }

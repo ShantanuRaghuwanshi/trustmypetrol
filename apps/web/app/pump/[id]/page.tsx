@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SIGNALS, type Signal } from "@tmp/shared";
 import { getPump, getPumpsWithScores, getReports } from "@/lib/data";
-import { ScorePill } from "@/components/ScorePill";
+import { ScoreRing } from "@/components/ScoreRing";
 
 export const revalidate = 300;
 
@@ -64,12 +65,21 @@ export default async function PumpPage({
             )}
           </div>
         </div>
-        <div style={{ textAlign: "right" }}>
-          <ScorePill score={pump.score} />
+        <div style={{ textAlign: "center" }}>
+          <ScoreRing score={pump.score} />
           <div className="pump-meta" style={{ marginTop: 6 }}>
             {pump.score.reportCount} reports · last 90 days
           </div>
         </div>
+      </div>
+
+      <div className="cta-row">
+        <Link href={`/report/${pump.id}`} className="btn-primary">
+          Report an issue at this pump
+        </Link>
+        <Link href={`/complaint/${pump.id}`} className="btn-outline">
+          File formal complaint
+        </Link>
       </div>
 
       <div className="two-col">
