@@ -37,7 +37,7 @@ export default function PumpMap({ pumps }: { pumps: PumpWithScore[] }) {
     <MapContainer
       center={center}
       zoom={12}
-      style={{ height: 420, width: "100%" }}
+      style={{ height: "clamp(280px, 45vh, 420px)", width: "100%" }}
       scrollWheelZoom={false}
     >
       <TileLayer

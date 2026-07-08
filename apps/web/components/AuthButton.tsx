@@ -29,7 +29,7 @@ export default function AuthButton() {
 
   return session ? (
     <span className="auth-chip">
-      {session.user.email}
+      <span className="auth-email">{session.user.email}</span>
       <button
         className="link-btn"
         onClick={() => supabase.auth.signOut()}

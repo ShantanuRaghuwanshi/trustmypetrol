@@ -7,7 +7,13 @@ import type { PumpWithScore } from "@/lib/data";
 const PumpMap = dynamic(() => import("./PumpMap"), {
   ssr: false,
   loading: () => (
-    <div style={{ height: 420, display: "grid", placeItems: "center" }}>
+    <div
+      style={{
+        height: "clamp(280px, 45vh, 420px)",
+        display: "grid",
+        placeItems: "center",
+      }}
+    >
       Loading map…
     </div>
   ),

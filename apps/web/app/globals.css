@@ -17,6 +17,12 @@
   box-sizing: border-box;
 }
 
+html,
+body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
 body {
   margin: 0;
   background: var(--paper);
@@ -50,10 +56,11 @@ a {
 .site-header .inner {
   max-width: 1080px;
   margin: 0 auto;
-  padding: 14px 20px;
+  padding: 12px 20px;
   display: flex;
-  align-items: baseline;
-  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
 }
 
 .brand {
@@ -61,6 +68,7 @@ a {
   font-size: 19px;
   color: var(--petrol);
   letter-spacing: -0.01em;
+  white-space: nowrap;
 }
 
 .tagline {
@@ -312,9 +320,11 @@ a {
   margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 18px;
+  flex-wrap: wrap;
+  gap: 8px 14px;
   font-size: 14px;
   font-weight: 600;
+  min-width: 0;
 }
 
 .site-nav a {
@@ -437,6 +447,14 @@ a {
   gap: 10px;
   font-size: 13px;
   color: var(--muted);
+  min-width: 0;
+}
+
+.auth-email {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .divider {
@@ -580,7 +598,7 @@ a {
 
 .fill-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
   gap: 10px;
 }
 
@@ -621,6 +639,39 @@ textarea.field {
 
 .panel.channel:hover strong {
   color: var(--petrol);
+}
+
+/* --- small screens --- */
+
+@media (max-width: 560px) {
+  .container {
+    padding: 0 14px 48px;
+  }
+
+  .site-header .inner {
+    padding: 10px 14px;
+  }
+
+  .brand {
+    font-size: 17px;
+  }
+
+  .site-nav {
+    font-size: 13px;
+  }
+
+  .hero {
+    padding: 22px 0 14px;
+  }
+
+  .detail-head {
+    padding-top: 20px;
+  }
+
+  .site-footer .inner {
+    flex-direction: column;
+    gap: 6px;
+  }
 }
 
 .pin-marker {
