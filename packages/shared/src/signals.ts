@@ -30,8 +30,13 @@ export const SIGNALS = {
     polarity: "negative",
   },
   no_e20_labelling: {
-    label: "No E20 labelling",
-    hint: "Blend labelling missing or unclear on dispensers",
+    label: "Blend not labelled",
+    hint: "Statutory blend labelling (E20 / E25 / E27) missing or unclear on dispensers",
+    polarity: "negative",
+  },
+  water_in_fuel: {
+    label: "Water in fuel",
+    hint: "Suspected moisture or phase separation — cloudy fuel, stalling, corrosion symptoms",
     polarity: "negative",
   },
   overcharge: {

@@ -29,13 +29,18 @@ export default function PumpScreen() {
           {pump.address}, {pump.district}
         </Text>
         <View style={{ flexDirection: "row", gap: 6, marginTop: 6, flexWrap: "wrap" }}>
-          {pump.blends.e20 && <Chip label="E20" on />}
-          {pump.blends.e10 ? <Chip label="E10" on /> : <Chip label="E10 ✕" subtle />}
+          <Chip label="E20" on />
           {pump.blends.premium ? (
-            <Chip label="Premium" on />
+            <Chip label="XP100" on />
           ) : (
-            <Chip label="Premium ✕" subtle />
+            <Chip label="XP100 ✕" subtle />
           )}
+          {pump.blends.higherBlends ? (
+            <Chip label="E25+" on />
+          ) : (
+            <Chip label="E25+ ✕" subtle />
+          )}
+          {pump.blends.e100 && <Chip label="E100" on />}
           {pump.blends.cng && <Chip label="CNG" on />}
         </View>
       </View>

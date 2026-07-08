@@ -641,6 +641,19 @@ textarea.field {
   color: var(--petrol);
 }
 
+/* --- keyboard focus --- */
+
+.chip-toggle:focus-visible,
+.btn-primary:focus-visible,
+.btn-outline:focus-visible,
+.btn-small:focus-visible,
+.link-btn:focus-visible,
+.field:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--petrol);
+  outline-offset: 2px;
+}
+
 /* --- small screens --- */
 
 @media (max-width: 560px) {

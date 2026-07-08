@@ -7,12 +7,13 @@ import { PumpCard } from "@/components/PumpCard";
 import { CityChips } from "@/components/CityChips";
 import MapHome from "@/components/MapHome";
 
-type Filter = "all" | "e10" | "premium" | "cng";
+type Filter = "all" | "premium" | "higherBlends" | "e100" | "cng";
 
 const FILTERS: { id: Filter; label: string }[] = [
   { id: "all", label: "All" },
-  { id: "e10", label: "E10 available" },
-  { id: "premium", label: "Premium (non-E20)" },
+  { id: "premium", label: "XP100" },
+  { id: "higherBlends", label: "E25+ blends" },
+  { id: "e100", label: "E100" },
   { id: "cng", label: "CNG" },
 ];
 
@@ -80,9 +81,10 @@ export default function MapScreen() {
                   borderColor: on ? colors.petrol : "#CBD6D4",
                   borderWidth: 1,
                   borderRadius: 999,
-                  paddingHorizontal: 11,
-                  paddingVertical: 4,
+                  paddingHorizontal: 12,
+                  paddingVertical: 8,
                 }}
+                hitSlop={6}
               >
                 <Text
                   style={{

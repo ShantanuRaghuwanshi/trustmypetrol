@@ -7,12 +7,13 @@ import type { PumpWithScore } from "@/lib/data";
 import { ScorePill } from "@/components/ScorePill";
 import PumpMapLoader from "@/components/PumpMapLoader";
 
-type Filter = "all" | "e10" | "premium" | "cng";
+type Filter = "all" | "premium" | "higherBlends" | "e100" | "cng";
 
 const FILTERS: { id: Filter; label: string }[] = [
   { id: "all", label: "All" },
-  { id: "e10", label: "E10 available" },
-  { id: "premium", label: "Premium (non-E20)" },
+  { id: "premium", label: "Unblended premium (XP100)" },
+  { id: "higherBlends", label: "E25+ blends" },
+  { id: "e100", label: "E100" },
   { id: "cng", label: "CNG" },
 ];
 
@@ -96,9 +97,9 @@ export default function PumpExplorer({ pumps }: { pumps: PumpWithScore[] }) {
               {p.omc} · {p.address} · dealer {p.dealerCode}
             </div>
             <div className="chips">
-              {p.blends.e20 && <span className="chip on">E20</span>}
-              {p.blends.e10 && <span className="chip on">E10</span>}
-              {p.blends.premium && <span className="chip on">Premium</span>}
+              {p.blends.premium && <span className="chip on">XP100</span>}
+              {p.blends.higherBlends && <span className="chip on">E25+</span>}
+              {p.blends.e100 && <span className="chip on">E100</span>}
               {p.blends.cng && <span className="chip on">CNG</span>}
               {p.score.reportCount > 0 && (
                 <span className="chip">

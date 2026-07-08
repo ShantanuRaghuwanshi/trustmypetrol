@@ -83,9 +83,10 @@ export function PumpCard({
           {pump.omc} · {pump.address} · dealer {pump.dealerCode}
         </Text>
         <View style={{ flexDirection: "row", gap: 6, flexWrap: "wrap" }}>
-          {pump.blends.e20 && <Chip label="E20" on />}
-          {pump.blends.e10 && <Chip label="E10" on />}
-          {pump.blends.premium && <Chip label="Premium" on />}
+          {pump.blends.premium && <Chip label="XP100" on />}
+          {pump.blends.higherBlends && <Chip label="E25+" on />}
+          {pump.blends.e100 && <Chip label="E100" on />}
+          {pump.blends.cng && <Chip label="CNG" on />}
           {!compact && score.reportCount > 0 && (
             <Chip
               label={`${score.reportCount} reports · ${Math.round(score.geoVerifiedRatio * 100)}% geo-verified`}

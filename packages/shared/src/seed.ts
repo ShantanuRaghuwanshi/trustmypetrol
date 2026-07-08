@@ -15,8 +15,8 @@ const seedId = (n: number) =>
   `0b8f1c2e-1111-4a01-9a01-${String(n).padStart(12, "0")}`;
 
 const BLEND_DEFAULTS: Blends = {
-  e10: false,
   e20: true,
+  higherBlends: false,
   e100: false,
   premium: false,
   cng: false,
@@ -37,16 +37,16 @@ const METRO_PUMPS: Array<{
   // Delhi
   { city: "Delhi", state: "Delhi", name: "Connaught Fuel Services", address: "Barakhamba Road, Connaught Place", omc: "IOCL", code: "07-D-104", lat: 28.6315, lng: 77.2167, blends: { premium: true } },
   { city: "Delhi", state: "Delhi", name: "Saket Highway Station", address: "Press Enclave Road, Saket", omc: "BPCL", code: "BP-07-0412", lat: 28.5245, lng: 77.2066, blends: { cng: true } },
-  { city: "Delhi", state: "Delhi", name: "Dwarka Sector Fuels", address: "Sector 12, Dwarka", omc: "HPCL", code: "DL-ND-0930", lat: 28.5921, lng: 77.046, blends: { e10: true, cng: true } },
+  { city: "Delhi", state: "Delhi", name: "Dwarka Sector Fuels", address: "Sector 12, Dwarka", omc: "HPCL", code: "DL-ND-0930", lat: 28.5921, lng: 77.046, blends: { higherBlends: true, cng: true } },
   { city: "Delhi", state: "Delhi", name: "Rohini Auto Point", address: "Outer Ring Road, Rohini", omc: "IOCL", code: "07-D-238", lat: 28.7383, lng: 77.0822 },
   // Mumbai
   { city: "Mumbai", state: "Maharashtra", name: "Andheri Link Fuels", address: "New Link Road, Andheri West", omc: "HPCL", code: "MH-MU-1145", lat: 19.1197, lng: 72.8468, blends: { premium: true } },
   { city: "Mumbai", state: "Maharashtra", name: "Bandra Sea Face Station", address: "SV Road, Bandra West", omc: "BPCL", code: "BP-27-0651", lat: 19.0596, lng: 72.8295, blends: { premium: true } },
-  { city: "Mumbai", state: "Maharashtra", name: "Powai Lakeside Fuels", address: "Adi Shankaracharya Marg, Powai", omc: "IOCL", code: "27-M-322", lat: 19.1176, lng: 72.906, blends: { e10: true } },
+  { city: "Mumbai", state: "Maharashtra", name: "Powai Lakeside Fuels", address: "Adi Shankaracharya Marg, Powai", omc: "IOCL", code: "27-M-322", lat: 19.1176, lng: 72.906, blends: { higherBlends: true } },
   { city: "Mumbai", state: "Maharashtra", name: "Dadar Central Services", address: "Dr Ambedkar Road, Dadar East", omc: "SHELL", code: "SH-MU-0088", lat: 19.0178, lng: 72.8478, blends: { premium: true } },
   // Bengaluru
   { city: "Bengaluru", state: "Karnataka", name: "Koramangala Fuel Hub", address: "80 Feet Road, Koramangala", omc: "IOCL", code: "29-B-517", lat: 12.9352, lng: 77.6245, blends: { premium: true } },
-  { city: "Bengaluru", state: "Karnataka", name: "Whitefield Tech Fuels", address: "ITPL Main Road, Whitefield", omc: "HPCL", code: "KA-BL-2041", lat: 12.9698, lng: 77.75, blends: { e10: true } },
+  { city: "Bengaluru", state: "Karnataka", name: "Whitefield Tech Fuels", address: "ITPL Main Road, Whitefield", omc: "HPCL", code: "KA-BL-2041", lat: 12.9698, lng: 77.75, blends: { higherBlends: true } },
   { city: "Bengaluru", state: "Karnataka", name: "Indiranagar Service Point", address: "100 Feet Road, Indiranagar", omc: "SHELL", code: "SH-BL-0119", lat: 12.9784, lng: 77.6408, blends: { premium: true } },
   { city: "Bengaluru", state: "Karnataka", name: "Jayanagar Auto Fuels", address: "4th Block, Jayanagar", omc: "BPCL", code: "BP-29-0774", lat: 12.9308, lng: 77.5838 },
   // Hyderabad
@@ -56,7 +56,7 @@ const METRO_PUMPS: Array<{
   { city: "Hyderabad", state: "Telangana", name: "Kukatpally Service Station", address: "JNTU Road, Kukatpally", omc: "NAYARA", code: "NY-HY-0221", lat: 17.4849, lng: 78.4138 },
   // Chennai
   { city: "Chennai", state: "Tamil Nadu", name: "T Nagar Fuel Point", address: "Usman Road, T Nagar", omc: "IOCL", code: "33-C-431", lat: 13.0418, lng: 80.2341, blends: { premium: true } },
-  { city: "Chennai", state: "Tamil Nadu", name: "Anna Nagar Services", address: "2nd Avenue, Anna Nagar", omc: "HPCL", code: "TN-CH-1722", lat: 13.085, lng: 80.2101, blends: { e10: true } },
+  { city: "Chennai", state: "Tamil Nadu", name: "Anna Nagar Services", address: "2nd Avenue, Anna Nagar", omc: "HPCL", code: "TN-CH-1722", lat: 13.085, lng: 80.2101, blends: { higherBlends: true } },
   { city: "Chennai", state: "Tamil Nadu", name: "Velachery Bypass Fuels", address: "Velachery Main Road", omc: "BPCL", code: "BP-33-0866", lat: 12.9815, lng: 80.218 },
   { city: "Chennai", state: "Tamil Nadu", name: "Adyar River Station", address: "LB Road, Adyar", omc: "SHELL", code: "SH-CH-0074", lat: 13.0067, lng: 80.257, blends: { premium: true } },
   // Kolkata
@@ -68,7 +68,7 @@ const METRO_PUMPS: Array<{
   { city: "Ahmedabad", state: "Gujarat", name: "Navrangpura Fuel Centre", address: "CG Road, Navrangpura", omc: "IOCL", code: "24-A-345", lat: 23.0365, lng: 72.5611, blends: { premium: true } },
   { city: "Ahmedabad", state: "Gujarat", name: "Satellite Ring Road Fuels", address: "Satellite Road", omc: "HPCL", code: "GJ-AH-1104", lat: 23.03, lng: 72.515, blends: { cng: true } },
   { city: "Ahmedabad", state: "Gujarat", name: "Maninagar Station", address: "Krishna Baug, Maninagar", omc: "BPCL", code: "BP-24-0618", lat: 22.9967, lng: 72.6031 },
-  { city: "Ahmedabad", state: "Gujarat", name: "Bopal Crossing Fuels", address: "Bopal-Ambli Road", omc: "JIO_BP", code: "JB-AH-0042", lat: 23.0333, lng: 72.4645, blends: { e10: true } },
+  { city: "Ahmedabad", state: "Gujarat", name: "Bopal Crossing Fuels", address: "Bopal-Ambli Road", omc: "JIO_BP", code: "JB-AH-0042", lat: 23.0333, lng: 72.4645, blends: { higherBlends: true } },
 ];
 
 const PUNE_PUMPS: Pump[] = [
@@ -82,7 +82,7 @@ const PUNE_PUMPS: Pump[] = [
     state: "Maharashtra",
     lat: 18.5590,
     lng: 73.7868,
-    blends: { e10: false, e20: true, e100: false, premium: false, cng: false },
+    blends: { e20: true, higherBlends: false, e100: false, premium: false, cng: false },
     status: "active",
   },
   {
@@ -95,7 +95,7 @@ const PUNE_PUMPS: Pump[] = [
     state: "Maharashtra",
     lat: 18.5628,
     lng: 73.8079,
-    blends: { e10: true, e20: true, e100: false, premium: true, cng: false },
+    blends: { e20: true, higherBlends: true, e100: false, premium: true, cng: false },
     status: "active",
   },
   {
@@ -108,7 +108,7 @@ const PUNE_PUMPS: Pump[] = [
     state: "Maharashtra",
     lat: 18.5074,
     lng: 73.8077,
-    blends: { e10: false, e20: true, e100: false, premium: true, cng: true },
+    blends: { e20: true, higherBlends: false, e100: false, premium: true, cng: true },
     status: "active",
   },
   {
@@ -121,7 +121,7 @@ const PUNE_PUMPS: Pump[] = [
     state: "Maharashtra",
     lat: 18.5913,
     lng: 73.7389,
-    blends: { e10: false, e20: true, e100: true, premium: false, cng: false },
+    blends: { e20: true, higherBlends: false, e100: true, premium: false, cng: false },
     status: "active",
   },
   {
@@ -134,7 +134,7 @@ const PUNE_PUMPS: Pump[] = [
     state: "Maharashtra",
     lat: 18.5177,
     lng: 73.8415,
-    blends: { e10: true, e20: true, e100: false, premium: true, cng: false },
+    blends: { e20: true, higherBlends: true, e100: false, premium: true, cng: false },
     status: "active",
   },
   {
@@ -147,7 +147,7 @@ const PUNE_PUMPS: Pump[] = [
     state: "Maharashtra",
     lat: 18.5089,
     lng: 73.9260,
-    blends: { e10: false, e20: true, e100: false, premium: false, cng: true },
+    blends: { e20: true, higherBlends: false, e100: false, premium: false, cng: true },
     status: "active",
   },
   {
@@ -160,7 +160,7 @@ const PUNE_PUMPS: Pump[] = [
     state: "Maharashtra",
     lat: 18.5679,
     lng: 73.9143,
-    blends: { e10: false, e20: true, e100: false, premium: true, cng: false },
+    blends: { e20: true, higherBlends: false, e100: false, premium: true, cng: false },
     status: "active",
   },
   {
@@ -173,7 +173,7 @@ const PUNE_PUMPS: Pump[] = [
     state: "Maharashtra",
     lat: 18.5989,
     lng: 73.7707,
-    blends: { e10: true, e20: true, e100: false, premium: true, cng: false },
+    blends: { e20: true, higherBlends: true, e100: false, premium: true, cng: false },
     status: "active",
   },
 ];
@@ -277,6 +277,9 @@ const specs: SeedReportSpec[] = [
   { pumpIdx: 16, user: "u55", ageDays: 16, signals: ["density_check_refused"], verified: true },
   { pumpIdx: 16, user: "u56", ageDays: 23, signals: ["good_experience"] },
   { pumpIdx: 16, user: "u57", ageDays: 30, signals: ["engine_trouble"], verified: true },
+  // water/phase-separation reports (post-universal-E20 complaint category)
+  { pumpIdx: 0, user: "u58", ageDays: 4, signals: ["water_in_fuel"], verified: true },
+  { pumpIdx: 2, user: "u59", ageDays: 7, signals: ["water_in_fuel", "engine_trouble"], verified: true },
 ];
 
 export const SEED_REPORTS: Report[] = specs.map((s, i) => {

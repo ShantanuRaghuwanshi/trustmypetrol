@@ -11,11 +11,18 @@ export type Omc =
 
 export type PumpStatus = "active" | "closed" | "unverified";
 
+/**
+ * What a pump dispenses. Since April 2026 every pump sells E20 (min 95
+ * octane) by mandate, so `e20` is informational; the differentiators are
+ * the higher blends now being introduced (E22–E30, IS 19850:2026),
+ * unblended super-premium (XP100-class), E100, and CNG.
+ */
 export interface Blends {
-  e10: boolean;
   e20: boolean;
+  /** E22 / E25 / E27 / E30 blends */
+  higherBlends: boolean;
   e100: boolean;
-  /** Premium petrol that is still non-E20 where available */
+  /** Unblended super-premium petrol (e.g. 100-octane XP100) */
   premium: boolean;
   cng: boolean;
 }

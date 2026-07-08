@@ -57,12 +57,14 @@ export default async function PumpPage({
           <div className="pump-meta">{pump.address}</div>
           <div className="chips" style={{ marginTop: 10 }}>
             {pump.blends.e20 && <span className="chip on">E20</span>}
-            {pump.blends.e10 && <span className="chip on">E10</span>}
-            {pump.blends.premium && <span className="chip on">Premium</span>}
-            {pump.blends.cng && <span className="chip on">CNG</span>}
-            {!pump.blends.e10 && !pump.blends.premium && (
-              <span className="chip">E20 only</span>
+            {pump.blends.premium && (
+              <span className="chip on">Unblended premium (XP100)</span>
             )}
+            {pump.blends.higherBlends && <span className="chip on">E25+</span>}
+            {pump.blends.cng && <span className="chip on">CNG</span>}
+            {!pump.blends.premium &&
+              !pump.blends.higherBlends &&
+              !pump.blends.e100 && <span className="chip">E20 only</span>}
           </div>
         </div>
         <div style={{ textAlign: "center" }}>

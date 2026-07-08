@@ -27,9 +27,10 @@ export function CityChips({
               borderColor: on ? colors.petrol : "#CBD6D4",
               borderWidth: 1,
               borderRadius: 999,
-              paddingHorizontal: 11,
-              paddingVertical: 4,
+              paddingHorizontal: 12,
+              paddingVertical: 8,
             }}
+            hitSlop={6}
           >
             <Text
               style={{
