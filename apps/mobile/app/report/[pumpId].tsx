@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Alert,
   Image,
@@ -14,6 +14,8 @@ import * as Location from "expo-location";
 import {
   ALL_SIGNALS,
   classifyCapture,
+  distanceMeters,
+  GEO_VERIFY_MAX_DISTANCE_M,
   SIGNALS,
   type Signal,
   type Verification,
@@ -25,6 +27,11 @@ interface Capture {
   photoUri: string;
   verification: Verification;
   distanceM: number;
+}
+
+interface GpsFix {
+  distanceM: number;
+  inRange: boolean;
 }
 
 /**
@@ -39,26 +46,47 @@ export default function ReportScreen() {
 
   const cameraRef = useRef<CameraView>(null);
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
+  const [gpsFix, setGpsFix] = useState<GpsFix | null>(null);
   const [capture, setCapture] = useState<Capture | null>(null);
   const [capturing, setCapturing] = useState(false);
   const [selected, setSelected] = useState<Signal[]>([]);
   const [freeText, setFreeText] = useState("");
   const [litres, setLitres] = useState("");
   const [amount, setAmount] = useState("");
+  const [odo, setOdo] = useState("");
+
+  // Live GPS chip on the viewfinder, like the mockup's "GPS locked · 38 m".
+  useEffect(() => {
+    if (!pump) return;
+    let sub: Location.LocationSubscription | null = null;
+    (async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") return;
+      sub = await Location.watchPositionAsync(
+        { accuracy: Location.Accuracy.High, distanceInterval: 5 },
+        (pos) => {
+          const d = distanceMeters(
+            pos.coords.latitude,
+            pos.coords.longitude,
+            pump.lat,
+            pump.lng,
+          );
+          setGpsFix({ distanceM: d, inRange: d <= GEO_VERIFY_MAX_DISTANCE_M });
+        },
+      );
+    })();
+    return () => sub?.remove();
+  }, [pump]);
 
   if (!pump) return <Text style={{ padding: 20 }}>Pump not found.</Text>;
+
+  const step = capture ? (selected.length > 0 ? 3 : 2) : 1;
 
   async function takePhoto() {
     if (!pump || capturing) return;
     setCapturing(true);
     try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        Alert.alert(
-          "Location needed",
-          "Your location at capture time is what makes a report verifiable. You can still file without it — the report will show as unverified.",
-        );
-      }
+      const { status } = await Location.getForegroundPermissionsAsync();
       const [photo, position] = await Promise.all([
         cameraRef.current?.takePictureAsync({ quality: 0.7 }),
         status === "granted"
@@ -113,6 +141,7 @@ export default function ReportScreen() {
       freeText: freeText.trim() || undefined,
       litres: litres ? Number(litres) : undefined,
       amountInr: amount ? Number(amount) : undefined,
+      odoKm: odo ? Number(odo) : undefined,
       verification: capture.verification,
       distanceToPumpM:
         capture.verification === "geo_verified" ? capture.distanceM : undefined,
@@ -121,7 +150,7 @@ export default function ReportScreen() {
     Alert.alert(
       "Report filed",
       capture.verification === "geo_verified"
-        ? `Geo-verified ${Math.round(capture.distanceM)} m from the pump. You can escalate it into a formal complaint from the pump page.`
+        ? `Geo-verified ${Math.round(capture.distanceM)} m from the pump. You can escalate it into a formal complaint from the You tab.`
         : "Filed as unverified (location was unavailable or didn't match). It still counts, with lower weight.",
       [
         { text: "Done", onPress: () => router.back() },
@@ -153,9 +182,27 @@ export default function ReportScreen() {
 
   return (
     <ScrollView contentContainerStyle={{ padding: 16, gap: 14 }}>
-      <View
-        style={{ borderRadius: 16, overflow: "hidden", height: 300 }}
-      >
+      {/* step progress, as in the mockup */}
+      <View style={{ gap: 6 }}>
+        <Text style={{ fontSize: 12, color: colors.muted }}>
+          Report · {pump.name}
+        </Text>
+        <View style={{ flexDirection: "row", gap: 5 }}>
+          {[1, 2, 3].map((i) => (
+            <View
+              key={i}
+              style={{
+                flex: 1,
+                height: 4,
+                borderRadius: 2,
+                backgroundColor: i <= step ? colors.petrol : colors.line,
+              }}
+            />
+          ))}
+        </View>
+      </View>
+
+      <View style={{ borderRadius: 16, overflow: "hidden", height: 300 }}>
         {capture ? (
           <View style={{ flex: 1 }}>
             <Image
@@ -163,37 +210,16 @@ export default function ReportScreen() {
               style={{ flex: 1 }}
               resizeMode="cover"
             />
-            <View
-              style={{
-                position: "absolute",
-                top: 10,
-                left: 10,
-                backgroundColor:
-                  capture.verification === "geo_verified"
-                    ? colors.geoBg
-                    : "#F0EDE6",
-                borderRadius: 999,
-                paddingHorizontal: 10,
-                paddingVertical: 3,
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 11,
-                  fontWeight: "700",
-                  color:
-                    capture.verification === "geo_verified"
-                      ? colors.geoText
-                      : "#8A7A4E",
-                }}
-              >
-                {capture.verification === "geo_verified"
+            <StatusChip
+              positive={capture.verification === "geo_verified"}
+              text={
+                capture.verification === "geo_verified"
                   ? `✓ GPS locked · ${Math.round(capture.distanceM)} m from pump`
                   : capture.verification === "location_mismatch"
                     ? `Location mismatch · ${Math.round(capture.distanceM)} m away`
-                    : "Location unavailable"}
-              </Text>
-            </View>
+                    : "Location unavailable"
+              }
+            />
             <Pressable
               onPress={() => setCapture(null)}
               style={{
@@ -213,6 +239,16 @@ export default function ReportScreen() {
           </View>
         ) : (
           <CameraView ref={cameraRef} style={{ flex: 1 }} facing="back">
+            <StatusChip
+              positive={gpsFix?.inRange ?? false}
+              text={
+                gpsFix
+                  ? gpsFix.inRange
+                    ? `✓ GPS locked · ${Math.round(gpsFix.distanceM)} m from pump`
+                    : `${Math.round(gpsFix.distanceM)} m from pump — move closer`
+                  : "Locating…"
+              }
+            />
             <View
               style={{
                 flex: 1,
@@ -270,20 +306,9 @@ export default function ReportScreen() {
 
       <Text style={sectionLabel}>Fill details (optional)</Text>
       <View style={{ flexDirection: "row", gap: 8 }}>
-        <TextInput
-          placeholder="Litres"
-          keyboardType="decimal-pad"
-          value={litres}
-          onChangeText={setLitres}
-          style={input}
-        />
-        <TextInput
-          placeholder="Amount ₹"
-          keyboardType="number-pad"
-          value={amount}
-          onChangeText={setAmount}
-          style={input}
-        />
+        <LabeledInput label="Litres" value={litres} onChange={setLitres} decimal />
+        <LabeledInput label="Amount ₹" value={amount} onChange={setAmount} />
+        <LabeledInput label="Odo km" value={odo} onChange={setOdo} />
       </View>
       <TextInput
         placeholder="Anything else? (optional, max 500 chars)"
@@ -309,17 +334,86 @@ export default function ReportScreen() {
             : "Take a photo first"}
         </Text>
       </Pressable>
-      <Text
-        style={{
-          fontSize: 11.5,
-          color: colors.muted,
-          textAlign: "center",
-        }}
-      >
+      <Text style={{ fontSize: 11.5, color: colors.muted, textAlign: "center" }}>
         Photos are captured live in-app. Location and time are recorded at
         capture — that's what makes your report evidence.
       </Text>
     </ScrollView>
+  );
+}
+
+function StatusChip({ positive, text }: { positive: boolean; text: string }) {
+  return (
+    <View
+      style={{
+        position: "absolute",
+        top: 10,
+        left: 10,
+        backgroundColor: positive
+          ? "rgba(226,241,232,.95)"
+          : "rgba(240,237,230,.95)",
+        borderRadius: 999,
+        paddingHorizontal: 10,
+        paddingVertical: 3,
+        zIndex: 2,
+      }}
+    >
+      <Text
+        style={{
+          fontSize: 11,
+          fontWeight: "700",
+          color: positive ? colors.geoText : "#8A7A4E",
+        }}
+      >
+        {text}
+      </Text>
+    </View>
+  );
+}
+
+function LabeledInput({
+  label,
+  value,
+  onChange,
+  decimal,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  decimal?: boolean;
+}) {
+  return (
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: colors.card,
+        borderColor: colors.line,
+        borderWidth: 1,
+        borderRadius: 12,
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        gap: 2,
+      }}
+    >
+      <Text
+        style={{
+          fontSize: 9.5,
+          letterSpacing: 1.2,
+          textTransform: "uppercase",
+          color: colors.muted,
+          fontWeight: "700",
+        }}
+      >
+        {label}
+      </Text>
+      <TextInput
+        keyboardType={decimal ? "decimal-pad" : "number-pad"}
+        value={value}
+        onChangeText={onChange}
+        placeholder="—"
+        style={{ fontSize: 14, fontWeight: "700", padding: 0 }}
+      />
+    </View>
   );
 }
 
@@ -332,7 +426,6 @@ const sectionLabel = {
 };
 
 const input = {
-  flex: 1,
   backgroundColor: colors.card,
   borderColor: colors.line,
   borderWidth: 1,

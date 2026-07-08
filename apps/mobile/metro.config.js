@@ -13,4 +13,8 @@ config.resolver.nodeModulesPaths = [
   path.resolve(workspaceRoot, "node_modules"),
 ];
 
+// Watchman can't read ~/Documents under macOS privacy protection (TCC);
+// Metro's node watcher handles a repo this size fine.
+config.resolver.useWatchman = false;
+
 module.exports = config;

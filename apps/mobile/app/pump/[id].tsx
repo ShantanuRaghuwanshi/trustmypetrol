@@ -1,9 +1,11 @@
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Link, useLocalSearchParams } from "expo-router";
 import { SIGNALS, type Signal } from "@tmp/shared";
+import { SEED_DEALER_RESPONSES } from "@tmp/shared/seed";
 import { useStore } from "@/lib/store";
 import { colors } from "@/lib/theme";
-import { ScorePill } from "@/components/ScorePill";
+import { ScoreRing } from "@/components/ScoreRing";
+import { Chip } from "@/components/PumpCard";
 
 export default function PumpScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -22,54 +24,37 @@ export default function PumpScreen() {
         <Text style={{ color: colors.muted, fontSize: 12.5 }}>
           {pump.omc} · dealer {pump.dealerCode}
         </Text>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: 10,
-          }}
-        >
-          <Text style={{ fontSize: 20, fontWeight: "800", flexShrink: 1 }}>
-            {pump.name}
-          </Text>
-          <ScorePill score={score} />
-        </View>
+        <Text style={{ fontSize: 20, fontWeight: "800" }}>{pump.name}</Text>
         <Text style={{ color: colors.muted, fontSize: 13 }}>
-          {pump.address}, {pump.district} · {score.reportCount} reports in 90
-          days
+          {pump.address}, {pump.district}
         </Text>
+        <View style={{ flexDirection: "row", gap: 6, marginTop: 6, flexWrap: "wrap" }}>
+          {pump.blends.e20 && <Chip label="E20" on />}
+          {pump.blends.e10 ? <Chip label="E10" on /> : <Chip label="E10 ✕" subtle />}
+          {pump.blends.premium ? (
+            <Chip label="Premium" on />
+          ) : (
+            <Chip label="Premium ✕" subtle />
+          )}
+          {pump.blends.cng && <Chip label="CNG" on />}
+        </View>
       </View>
 
-      <Link
-        href={{ pathname: "/report/[pumpId]", params: { pumpId: pump.id } }}
-        asChild
-      >
-        <Pressable
-          style={{
-            backgroundColor: colors.petrol,
-            borderRadius: 12,
-            padding: 14,
-          }}
-        >
-          <Text
-            style={{
-              color: "#fff",
-              fontWeight: "700",
-              textAlign: "center",
-              fontSize: 15,
-            }}
-          >
-            Report an issue at this pump
+      {/* score dial + signal breakdown, side by side like the mockup */}
+      <View style={[card, { flexDirection: "row", gap: 14, alignItems: "center" }]}>
+        <ScoreRing score={score} />
+        <View style={{ flex: 1 }}>
+          <Text style={[label, { marginBottom: 6 }]}>
+            Last 90 days · {score.reportCount} reports
           </Text>
-        </Pressable>
-      </Link>
-
-      {counts.length > 0 && (
-        <View style={card}>
-          <Text style={label}>Signal breakdown</Text>
+          {counts.length === 0 && (
+            <Text style={{ color: colors.muted, fontSize: 12.5 }}>
+              No signals recorded yet.
+            </Text>
+          )}
           {counts
             .sort(([, a], [, b]) => b - a)
+            .slice(0, 4)
             .map(([signal, n]) => (
               <View
                 key={signal}
@@ -77,10 +62,10 @@ export default function PumpScreen() {
                   flexDirection: "row",
                   alignItems: "center",
                   gap: 8,
-                  marginBottom: 6,
+                  marginBottom: 5,
                 }}
               >
-                <Text style={{ width: 150, fontSize: 12.5 }}>
+                <Text style={{ width: 118, fontSize: 12 }} numberOfLines={1}>
                   {SIGNALS[signal].label}
                 </Text>
                 <View
@@ -119,77 +104,116 @@ export default function PumpScreen() {
               </View>
             ))}
         </View>
-      )}
+      </View>
 
-      <Text style={label}>Recent reports</Text>
-      {reports.map((r) => (
-        <View key={r.id} style={card}>
-          <View
+      <Link
+        href={{ pathname: "/report/[pumpId]", params: { pumpId: pump.id } }}
+        asChild
+      >
+        <Pressable
+          style={{
+            backgroundColor: colors.petrol,
+            borderRadius: 12,
+            padding: 14,
+          }}
+        >
+          <Text
             style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
+              color: "#fff",
+              fontWeight: "700",
+              textAlign: "center",
+              fontSize: 15,
             }}
           >
-            <Text style={{ fontWeight: "650" as never, fontSize: 13 }}>
-              {new Date(r.reportedAt).toLocaleDateString("en-IN", {
-                day: "numeric",
-                month: "short",
-              })}
-            </Text>
-            <View
-              style={{
-                backgroundColor:
-                  r.verification === "geo_verified"
-                    ? colors.geoBg
-                    : "#F0EDE6",
-                borderRadius: 999,
-                paddingHorizontal: 8,
-                paddingVertical: 2,
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 10.5,
-                  fontWeight: "700",
-                  color:
-                    r.verification === "geo_verified"
-                      ? colors.geoText
-                      : "#8A7A4E",
-                }}
-              >
-                {r.verification === "geo_verified"
-                  ? `✓ Geo-verified${r.distanceToPumpM != null ? ` · ${Math.round(r.distanceToPumpM)} m` : ""}`
-                  : "Unverified"}
-              </Text>
-            </View>
-          </View>
-          <View
-            style={{ flexDirection: "row", flexWrap: "wrap", gap: 5, marginTop: 7 }}
-          >
-            {r.signals.map((s) => (
+            Report an issue at this pump
+          </Text>
+        </Pressable>
+      </Link>
+
+      <Text style={label}>Recent reports</Text>
+      {reports.map((r) => {
+        const dealerResponse = SEED_DEALER_RESPONSES[r.id];
+        return (
+          <View key={r.id} style={{ gap: 8 }}>
+            <View style={card}>
               <View
-                key={s}
                 style={{
-                  backgroundColor: "#EDF3F2",
-                  borderRadius: 999,
-                  paddingHorizontal: 8,
-                  paddingVertical: 2,
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
                 }}
               >
-                <Text style={{ fontSize: 11, color: "#33484A" }}>
-                  {SIGNALS[s].label}
+                <Text style={{ fontWeight: "600", fontSize: 13 }}>
+                  {new Date(r.reportedAt).toLocaleDateString("en-IN", {
+                    day: "numeric",
+                    month: "short",
+                  })}
+                </Text>
+                <View
+                  style={{
+                    backgroundColor:
+                      r.verification === "geo_verified"
+                        ? colors.geoBg
+                        : "#F0EDE6",
+                    borderRadius: 999,
+                    paddingHorizontal: 8,
+                    paddingVertical: 2,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 10.5,
+                      fontWeight: "700",
+                      color:
+                        r.verification === "geo_verified"
+                          ? colors.geoText
+                          : "#8A7A4E",
+                    }}
+                  >
+                    {r.verification === "geo_verified"
+                      ? `✓ Geo-verified${r.distanceToPumpM != null ? ` · ${Math.round(r.distanceToPumpM)} m` : ""}`
+                      : "Unverified"}
+                  </Text>
+                </View>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  flexWrap: "wrap",
+                  gap: 5,
+                  marginTop: 7,
+                }}
+              >
+                {r.signals.map((s) => (
+                  <Chip key={s} label={SIGNALS[s].label} />
+                ))}
+              </View>
+              {r.freeText ? (
+                <Text style={{ marginTop: 7, fontSize: 13, color: "#4A5A5C" }}>
+                  {r.freeText}
+                </Text>
+              ) : null}
+            </View>
+            {dealerResponse && (
+              <View
+                style={[
+                  card,
+                  { backgroundColor: "#F4F7F6", marginLeft: 18 },
+                ]}
+              >
+                <Text
+                  style={[label, { color: colors.petrol, marginBottom: 4 }]}
+                >
+                  Dealer response · verified owner
+                </Text>
+                <Text style={{ fontSize: 12.5, color: "#4A5A5C", lineHeight: 18 }}>
+                  {dealerResponse}
                 </Text>
               </View>
-            ))}
+            )}
           </View>
-          {r.freeText ? (
-            <Text style={{ marginTop: 7, fontSize: 13, color: "#4A5A5C" }}>
-              {r.freeText}
-            </Text>
-          ) : null}
-        </View>
-      ))}
+        );
+      })}
     </ScrollView>
   );
 }
@@ -208,5 +232,4 @@ const label = {
   textTransform: "uppercase" as const,
   color: colors.muted,
   fontWeight: "700" as const,
-  marginBottom: 8,
 };

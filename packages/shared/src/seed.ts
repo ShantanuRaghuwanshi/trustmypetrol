@@ -202,3 +202,9 @@ export const SEED_REPORTS: Report[] = specs.map((s, i) => {
 export const SEED_TRUST_LEVELS: Record<string, number> = Object.fromEntries(
   specs.filter((s) => s.trustLevel).map((s) => [s.user, s.trustLevel!]),
 );
+
+/** Dealer right-of-reply examples, keyed by report id. */
+export const SEED_DEALER_RESPONSES: Record<string, string> = {
+  "4e9d2c00-2222-4b02-8b02-000000000001":
+    "Blend boards were installed on 3 Jul after this report. The density register is available on request — S. Patil, dealer.",
+};

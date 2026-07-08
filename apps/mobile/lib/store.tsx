@@ -20,6 +20,7 @@ export interface LocalReportInput {
   freeText?: string;
   litres?: number;
   amountInr?: number;
+  odoKm?: number;
   verification: Report["verification"];
   distanceToPumpM?: number;
   photoUri?: string;
@@ -67,6 +68,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
           freeText: input.freeText,
           litres: input.litres,
           amountInr: input.amountInr,
+          odoKm: input.odoKm,
           verification: input.verification,
           distanceToPumpM: input.distanceToPumpM,
           reportedAt: new Date().toISOString(),

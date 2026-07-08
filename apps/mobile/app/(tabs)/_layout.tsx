@@ -1,42 +1,70 @@
 import { Tabs } from "expo-router";
-import { Text } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { colors } from "@/lib/theme";
-
-function TabIcon({ glyph, focused }: { glyph: string; focused: boolean }) {
-  return (
-    <Text style={{ fontSize: 20, opacity: focused ? 1 : 0.45 }}>{glyph}</Text>
-  );
-}
 
 export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: colors.petrol,
-        tabBarInactiveTintColor: colors.muted,
+        tabBarInactiveTintColor: "#8AA0A2",
+        tabBarLabelStyle: { fontSize: 10, fontWeight: "600" },
         headerTitleStyle: { fontWeight: "700", color: colors.ink },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: "Pumps",
+          title: "Map",
           headerTitle: "TrustMyPetrol · Pune",
-          tabBarIcon: ({ focused }) => <TabIcon glyph="⛽" focused={focused} />,
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "location" : "location-outline"}
+              size={21}
+              color={color}
+            />
+          ),
         }}
       />
       <Tabs.Screen
-        name="activity"
+        name="pumps"
         options={{
-          title: "My reports",
-          tabBarIcon: ({ focused }) => <TabIcon glyph="📋" focused={focused} />,
+          title: "Pumps",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "list" : "list-outline"}
+              size={21}
+              color={color}
+            />
+          ),
         }}
       />
       <Tabs.Screen
-        name="rights"
+        name="report"
         options={{
-          title: "Your rights",
-          tabBarIcon: ({ focused }) => <TabIcon glyph="⚖️" focused={focused} />,
+          title: "Report",
+          headerTitle: "Report an issue",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "add-circle" : "add-circle-outline"}
+              size={23}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="you"
+        options={{
+          title: "You",
+          headerTitle: "Your activity",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "person" : "person-outline"}
+              size={21}
+              color={color}
+            />
+          ),
         }}
       />
     </Tabs>
