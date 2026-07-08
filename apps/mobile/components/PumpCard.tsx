@@ -1,4 +1,5 @@
 import { Pressable, Text, View } from "react-native";
+import { displayDealerCode } from "@tmp/shared";
 import { Link } from "expo-router";
 import type { Pump, PumpScore } from "@tmp/shared";
 import { colors } from "@/lib/theme";
@@ -80,7 +81,8 @@ export function PumpCard({
           <ScorePill score={score} />
         </View>
         <Text style={{ color: colors.muted, fontSize: 12.5 }} numberOfLines={1}>
-          {pump.omc} · {pump.address} · dealer {pump.dealerCode}
+          {pump.omc} · {pump.address}
+          {displayDealerCode(pump.dealerCode) ? ` · dealer ${displayDealerCode(pump.dealerCode)}` : ""}
         </Text>
         <View style={{ flexDirection: "row", gap: 6, flexWrap: "wrap" }}>
           {pump.blends.premium && <Chip label="XP100" on />}

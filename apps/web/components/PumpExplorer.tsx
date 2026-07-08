@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { CITY_NAMES } from "@tmp/shared";
+import { displayDealerCode, CITY_NAMES } from "@tmp/shared";
 import type { PumpWithScore } from "@/lib/data";
 import { ScorePill } from "@/components/ScorePill";
 import PumpMapLoader from "@/components/PumpMapLoader";
@@ -33,9 +33,15 @@ export default function PumpExplorer({ pumps }: { pumps: PumpWithScore[] }) {
     });
   }, [pumps, query, filter, city]);
 
+  // scored pumps first, then the rest; cap the grid so a metro's full
+  // inventory doesn't render thousands of cards at once
+  const GRID_CAP = 60;
   const sorted = [...filtered].sort(
-    (a, b) => (b.score.score ?? -1) - (a.score.score ?? -1),
+    (a, b) =>
+      (b.score.score ?? -1) - (a.score.score ?? -1) ||
+      b.score.reportCount - a.score.reportCount,
   );
+  const visible = sorted.slice(0, GRID_CAP);
 
   return (
     <>
@@ -85,16 +91,19 @@ export default function PumpExplorer({ pumps }: { pumps: PumpWithScore[] }) {
 
       <div className="section-label">
         {filtered.length} pumps · scores over the last 90 days
+        {filtered.length > visible.length &&
+          ` · showing ${visible.length} — search or filter to narrow`}
       </div>
       <div className="pump-grid">
-        {sorted.map((p) => (
+        {visible.map((p) => (
           <Link key={p.id} href={`/pump/${p.id}`} className="pump-card">
             <div className="top">
               <h3>{p.name}</h3>
               <ScorePill score={p.score} />
             </div>
             <div className="pump-meta">
-              {p.omc} · {p.address} · dealer {p.dealerCode}
+              {p.omc} · {p.address}
+              {displayDealerCode(p.dealerCode) && ` · dealer ${displayDealerCode(p.dealerCode)}`}
             </div>
             <div className="chips">
               {p.blends.premium && <span className="chip on">XP100</span>}

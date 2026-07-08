@@ -33,12 +33,20 @@ function regionFor(pumps: Pump[]) {
   };
 }
 
+// react-native-maps chokes on thousands of custom markers; cap until
+// clustering lands. The list tabs still show everything (virtualised).
+const MAX_MARKERS = 250;
+
 export default function MapHome({
-  pumps,
+  pumps: allPumps,
   scoreFor,
   selectedId,
   onSelect,
 }: MapHomeProps) {
+  const pumps =
+    allPumps.length <= MAX_MARKERS
+      ? allPumps
+      : allPumps.slice(0, MAX_MARKERS);
   return (
     <MapView style={{ flex: 1 }} initialRegion={regionFor(pumps)}>
       {pumps.map((pump) => {

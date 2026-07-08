@@ -140,7 +140,8 @@ export default function YouScreen() {
       <Text style={{ color: colors.muted, fontSize: 11.5, lineHeight: 17 }}>
         Sources: MS & HSD (Regulation of Supply, Distribution and Prevention of
         Malpractices) Order, 2005; OMC Marketing Discipline Guidelines. General
-        information, not legal advice.
+        information, not legal advice. Pump locations © OpenStreetMap
+        contributors (ODbL).
       </Text>
     </ScrollView>
   );

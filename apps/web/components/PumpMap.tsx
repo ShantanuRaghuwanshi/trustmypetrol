@@ -25,7 +25,20 @@ function pinFor(pump: PumpWithScore): L.DivIcon {
   });
 }
 
-export default function PumpMap({ pumps }: { pumps: PumpWithScore[] }) {
+// Rendering thousands of DOM markers makes Leaflet crawl; prioritise
+// scored pumps and cap the rest until clustering lands.
+const MAX_MARKERS = 400;
+
+export default function PumpMap({ pumps: allPumps }: { pumps: PumpWithScore[] }) {
+  const pumps =
+    allPumps.length <= MAX_MARKERS
+      ? allPumps
+      : [...allPumps]
+          .sort(
+            (a, b) =>
+              (b.score.reportCount ?? 0) - (a.score.reportCount ?? 0),
+          )
+          .slice(0, MAX_MARKERS);
   // Fit whatever set of pumps we're given — one city zooms in, all-India
   // zooms out. Remounted (via key) when the city selection changes.
   const bounds: [[number, number], [number, number]] = pumps.length

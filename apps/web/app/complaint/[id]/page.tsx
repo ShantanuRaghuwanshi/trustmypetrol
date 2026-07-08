@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { displayDealerCode } from "@tmp/shared";
 import { notFound } from "next/navigation";
 import { getPump, getReports } from "@/lib/data";
 import ComplaintAssistant from "@/components/ComplaintAssistant";
@@ -30,7 +31,8 @@ export default async function ComplaintPage({
       <div className="detail-head">
         <div>
           <div className="pump-meta">
-            File a formal complaint · {pump.omc} · dealer {pump.dealerCode}
+            File a formal complaint · {pump.omc}
+            {displayDealerCode(pump.dealerCode) && ` · dealer ${displayDealerCode(pump.dealerCode)}`}
           </div>
           <h1>{pump.name}</h1>
           <div className="pump-meta">

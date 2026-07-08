@@ -20,6 +20,14 @@ export const COMPLAINT_CHANNELS = [
   },
 ];
 
+/**
+ * Pumps imported from OpenStreetMap carry an OSM-<id> placeholder until
+ * enriched with real OMC dealer codes — never show those as official.
+ */
+export function displayDealerCode(dealerCode: string): string | null {
+  return dealerCode.startsWith("OSM-") ? null : dealerCode;
+}
+
 const INR = new Intl.NumberFormat("en-IN", {
   style: "currency",
   currency: "INR",
@@ -51,10 +59,14 @@ export function draftGrievance(pump: Pump, report: Report): string {
       ? ` Geo-tagged photographic evidence is attached — capture location verified within ${Math.round(report.distanceToPumpM ?? 0)} m of the outlet.`
       : " Photographic evidence is attached.";
 
+  const code = displayDealerCode(pump.dealerCode);
+  const dealerLine = code
+    ? ` (${pump.omc} dealer code ${code})`
+    : ` (${pump.omc === "OTHER" ? "retail outlet" : `${pump.omc} outlet`})`;
+
   return (
     `Complaint regarding fuel quality / dispensing at ${pump.name}, ` +
-    `${pump.address}, ${pump.district}, ${pump.state} ` +
-    `(${pump.omc} dealer code ${pump.dealerCode}).\n\n` +
+    `${pump.address}, ${pump.district}, ${pump.state}${dealerLine}.\n\n` +
     `On ${when} I visited this retail outlet.${purchase} ` +
     `Issues observed: ${observed}.${evidence}\n\n` +
     `I request that a fuel quality and quantity inspection of this outlet be ` +

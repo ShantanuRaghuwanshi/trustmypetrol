@@ -1,6 +1,6 @@
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { Link, useLocalSearchParams } from "expo-router";
-import { SIGNALS, type Signal } from "@tmp/shared";
+import { displayDealerCode, SIGNALS, type Signal } from "@tmp/shared";
 import { SEED_DEALER_RESPONSES } from "@tmp/shared/seed";
 import { useStore } from "@/lib/store";
 import { colors } from "@/lib/theme";
@@ -22,7 +22,8 @@ export default function PumpScreen() {
     <ScrollView contentContainerStyle={{ padding: 16, gap: 14 }}>
       <View style={{ gap: 4 }}>
         <Text style={{ color: colors.muted, fontSize: 12.5 }}>
-          {pump.omc} · dealer {pump.dealerCode}
+          {pump.omc}
+          {displayDealerCode(pump.dealerCode) ? ` · dealer ${displayDealerCode(pump.dealerCode)}` : ""}
         </Text>
         <Text style={{ fontSize: 20, fontWeight: "800" }}>{pump.name}</Text>
         <Text style={{ color: colors.muted, fontSize: 13 }}>

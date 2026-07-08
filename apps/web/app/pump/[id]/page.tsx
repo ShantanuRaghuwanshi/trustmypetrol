@@ -1,16 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { SIGNALS, type Signal } from "@tmp/shared";
-import { getPump, getPumpsWithScores, getReports } from "@/lib/data";
+import { displayDealerCode, SIGNALS, type Signal } from "@tmp/shared";
+import { getPump, getReports } from "@/lib/data";
 import { ScoreRing } from "@/components/ScoreRing";
 
+// Rendered on demand with ISR — with thousands of imported pumps,
+// prebuilding every page would blow up build times.
 export const revalidate = 300;
-
-export async function generateStaticParams() {
-  const pumps = await getPumpsWithScores();
-  return pumps.map((p) => ({ id: p.id }));
-}
+export const dynamicParams = true;
 
 export async function generateMetadata({
   params,
@@ -22,7 +20,7 @@ export async function generateMetadata({
   if (!pump) return {};
   return {
     title: `${pump.name}, ${pump.district} — reviews & fuel quality reports`,
-    description: `Crowd-verified fuel quality record for ${pump.name} (${pump.omc}, dealer ${pump.dealerCode}), ${pump.address}, ${pump.district}.`,
+    description: `Crowd-verified fuel quality record for ${pump.name} (${pump.omc}${displayDealerCode(pump.dealerCode) ? `, dealer ${displayDealerCode(pump.dealerCode)}` : ""}), ${pump.address}, ${pump.district}.`,
   };
 }
 
@@ -50,7 +48,8 @@ export default async function PumpPage({
       <div className="detail-head">
         <div>
           <div className="pump-meta">
-            {pump.omc} · dealer {pump.dealerCode} · {pump.district},{" "}
+            {pump.omc}
+            {displayDealerCode(pump.dealerCode) && ` · dealer ${displayDealerCode(pump.dealerCode)}`}{" "}· {pump.district},{" "}
             {pump.state}
           </div>
           <h1>{pump.name}</h1>

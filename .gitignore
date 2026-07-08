@@ -25,3 +25,4 @@ apps/mobile/ios/
 # os / editor
 .DS_Store
 *.log
+.osm-cache/

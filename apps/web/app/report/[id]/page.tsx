@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { displayDealerCode } from "@tmp/shared";
 import { notFound } from "next/navigation";
 import { getPump } from "@/lib/data";
 import ReportForm from "@/components/ReportForm";
@@ -29,7 +30,8 @@ export default async function ReportPage({
       <div className="detail-head">
         <div>
           <div className="pump-meta">
-            Report an issue · {pump.omc} · dealer {pump.dealerCode}
+            Report an issue · {pump.omc}
+            {displayDealerCode(pump.dealerCode) && ` · dealer ${displayDealerCode(pump.dealerCode)}`}
           </div>
           <h1>{pump.name}</h1>
           <div className="pump-meta">

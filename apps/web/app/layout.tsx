@@ -37,7 +37,15 @@ export default function RootLayout({
           <div className="inner">
             <span>
               8 metro cities · Scores from geo-verified reports over the last
-              90 days
+              90 days · Pump locations ©{" "}
+              <a
+                href="https://www.openstreetmap.org/copyright"
+                target="_blank"
+                rel="noreferrer"
+              >
+                OpenStreetMap
+              </a>{" "}
+              contributors
             </span>
             <span>
               Fuel quality issue?{" "}
