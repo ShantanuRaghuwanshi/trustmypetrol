@@ -33,13 +33,21 @@ export default function PumpExplorer({ pumps }: { pumps: PumpWithScore[] }) {
     });
   }, [pumps, query, filter, city]);
 
-  // scored pumps first, then the rest; cap the grid so a metro's full
-  // inventory doesn't render thousands of cards at once
+  // scored pumps first, then named pumps over generic OSM entries; cap the
+  // grid so a metro's full inventory doesn't render thousands of cards
   const GRID_CAP = 60;
+  const generic = (p: PumpWithScore) =>
+    /^(petrol( pump)?|fuel( station)?|petroleum|(iocl|bpcl|hpcl|shell|nayara|jio_bp) pump)$/i.test(
+      p.name.trim(),
+    )
+      ? 1
+      : 0;
   const sorted = [...filtered].sort(
     (a, b) =>
       (b.score.score ?? -1) - (a.score.score ?? -1) ||
-      b.score.reportCount - a.score.reportCount,
+      b.score.reportCount - a.score.reportCount ||
+      generic(a) - generic(b) ||
+      a.name.localeCompare(b.name),
   );
   const visible = sorted.slice(0, GRID_CAP);
 
