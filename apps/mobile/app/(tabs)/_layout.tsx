@@ -16,7 +16,7 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: "Map",
-          headerTitle: "TrustMyPetrol · Pune",
+          headerTitle: "TrustMyPetrol",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? "location" : "location-outline"}

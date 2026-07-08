@@ -26,17 +26,28 @@ function pinFor(pump: PumpWithScore): L.DivIcon {
 }
 
 export default function PumpMap({ pumps }: { pumps: PumpWithScore[] }) {
-  const center: [number, number] = pumps.length
+  // Fit whatever set of pumps we're given — one city zooms in, all-India
+  // zooms out. Remounted (via key) when the city selection changes.
+  const bounds: [[number, number], [number, number]] = pumps.length
     ? [
-        pumps.reduce((s, p) => s + p.lat, 0) / pumps.length,
-        pumps.reduce((s, p) => s + p.lng, 0) / pumps.length,
+        [
+          Math.min(...pumps.map((p) => p.lat)) - 0.02,
+          Math.min(...pumps.map((p) => p.lng)) - 0.02,
+        ],
+        [
+          Math.max(...pumps.map((p) => p.lat)) + 0.02,
+          Math.max(...pumps.map((p) => p.lng)) + 0.02,
+        ],
       ]
-    : [18.5204, 73.8567];
+    : [
+        [8, 68],
+        [34, 90],
+      ];
 
   return (
     <MapContainer
-      center={center}
-      zoom={12}
+      bounds={bounds}
+      boundsOptions={{ padding: [24, 24] }}
       style={{ height: "clamp(280px, 45vh, 420px)", width: "100%" }}
       scrollWheelZoom={false}
     >

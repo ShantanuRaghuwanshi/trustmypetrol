@@ -2,13 +2,16 @@
   "expo": {
     "name": "TrustMyPetrol",
     "slug": "trustmypetrol",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "scheme": "trustmypetrol",
     "orientation": "portrait",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "backgroundColor": "#F6F8F7",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": false,
+      "bundleIdentifier": "in.trustmypetrol.app",
       "infoPlist": {
         "NSCameraUsageDescription": "Photos are taken live in-app so reports carry verifiable evidence.",
         "NSLocationWhenInUseUsageDescription": "Your location at capture time verifies the report was made at the pump."
@@ -16,13 +19,34 @@
     },
     "android": {
       "package": "in.trustmypetrol.app",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "monochromeImage": "./assets/monochrome-icon.png",
+        "backgroundColor": "#0E6B72"
+      },
       "permissions": [
         "CAMERA",
         "ACCESS_FINE_LOCATION"
+      ],
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO"
       ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#F6F8F7"
+        }
+      ],
       [
         "expo-camera",
         {
@@ -35,7 +59,8 @@
           "locationWhenInUsePermission": "Your location at capture time verifies the report was made at the pump."
         }
       ],
-      "expo-web-browser"
+      "expo-web-browser",
+      "./plugins/withReleaseSigning"
     ],
     "experiments": {
       "typedRoutes": false

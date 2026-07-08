@@ -4,6 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useStore } from "@/lib/store";
 import { colors } from "@/lib/theme";
 import { PumpCard } from "@/components/PumpCard";
+import { CityChips } from "@/components/CityChips";
 import MapHome from "@/components/MapHome";
 
 type Filter = "all" | "e10" | "premium" | "cng";
@@ -19,17 +20,19 @@ export default function MapScreen() {
   const { pumps, scoreFor } = useStore();
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
+  const [city, setCity] = useState("Pune");
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return pumps.filter((p) => {
+      if (city && p.district !== city) return false;
       if (filter !== "all" && !p.blends[filter]) return false;
       if (q && !`${p.name} ${p.address}`.toLowerCase().includes(q))
         return false;
       return true;
     });
-  }, [pumps, query, filter]);
+  }, [pumps, query, filter, city]);
 
   const selected =
     filtered.find((p) => p.id === selectedId) ?? filtered[0] ?? null;
@@ -51,13 +54,20 @@ export default function MapScreen() {
         >
           <Ionicons name="search" size={15} color={colors.muted} />
           <TextInput
-            placeholder="Search pumps in Pune…"
+            placeholder={`Search pumps${city ? ` in ${city}` : ""}…`}
             placeholderTextColor={colors.muted}
             value={query}
             onChangeText={setQuery}
             style={{ flex: 1, paddingVertical: 10, fontSize: 14 }}
           />
         </View>
+        <CityChips
+          city={city}
+          onChange={(c) => {
+            setCity(c);
+            setSelectedId(null);
+          }}
+        />
         <View style={{ flexDirection: "row", gap: 7, flexWrap: "wrap" }}>
           {FILTERS.map((f) => {
             const on = filter === f.id;
@@ -91,6 +101,7 @@ export default function MapScreen() {
 
       <View style={{ flex: 1 }}>
         <MapHome
+          key={city || "all"}
           pumps={filtered}
           scoreFor={scoreFor}
           selectedId={selected?.id ?? null}

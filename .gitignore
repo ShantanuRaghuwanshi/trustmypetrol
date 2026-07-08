@@ -14,6 +14,14 @@ dist/
 .env.local
 .env.*.local
 
+# android signing credentials — keep the keystore backed up somewhere safe,
+# but never in git
+apps/mobile/credentials/
+
+# generated native projects (Expo CNG — recreate with `npx expo prebuild`)
+apps/mobile/android/
+apps/mobile/ios/
+
 # os / editor
 .DS_Store
 *.log

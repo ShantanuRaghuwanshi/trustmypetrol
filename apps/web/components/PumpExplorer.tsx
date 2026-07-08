@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { CITY_NAMES } from "@tmp/shared";
 import type { PumpWithScore } from "@/lib/data";
 import { ScorePill } from "@/components/ScorePill";
 import PumpMapLoader from "@/components/PumpMapLoader";
@@ -18,16 +19,18 @@ const FILTERS: { id: Filter; label: string }[] = [
 export default function PumpExplorer({ pumps }: { pumps: PumpWithScore[] }) {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
+  const [city, setCity] = useState(""); // "" = all India
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return pumps.filter((p) => {
+      if (city && p.district !== city) return false;
       if (filter !== "all" && !p.blends[filter]) return false;
       if (q && !`${p.name} ${p.address} ${p.district}`.toLowerCase().includes(q))
         return false;
       return true;
     });
-  }, [pumps, query, filter]);
+  }, [pumps, query, filter, city]);
 
   const sorted = [...filtered].sort(
     (a, b) => (b.score.score ?? -1) - (a.score.score ?? -1),
@@ -38,10 +41,29 @@ export default function PumpExplorer({ pumps }: { pumps: PumpWithScore[] }) {
       <div className="explorer-controls">
         <input
           className="field"
-          placeholder="Search pumps in Pune…"
+          placeholder={`Search pumps${city ? ` in ${city}` : ""}…`}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
+        <div className="chips">
+          <button
+            type="button"
+            className={`chip-toggle${city === "" ? " on" : ""}`}
+            onClick={() => setCity("")}
+          >
+            All India
+          </button>
+          {CITY_NAMES.map((c) => (
+            <button
+              key={c}
+              type="button"
+              className={`chip-toggle${city === c ? " on" : ""}`}
+              onClick={() => setCity(c)}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
         <div className="chips">
           {FILTERS.map((f) => (
             <button
@@ -57,7 +79,7 @@ export default function PumpExplorer({ pumps }: { pumps: PumpWithScore[] }) {
       </div>
 
       <div className="map-panel">
-        <PumpMapLoader pumps={filtered} />
+        <PumpMapLoader key={city || "all"} pumps={filtered} />
       </div>
 
       <div className="section-label">

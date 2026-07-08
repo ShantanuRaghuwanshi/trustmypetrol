@@ -36,8 +36,8 @@ export default function RootLayout({
         <footer className="site-footer">
           <div className="inner">
             <span>
-              Pune pilot · Scores from geo-verified reports over the last 90
-              days
+              8 metro cities · Scores from geo-verified reports over the last
+              90 days
             </span>
             <span>
               Fuel quality issue?{" "}

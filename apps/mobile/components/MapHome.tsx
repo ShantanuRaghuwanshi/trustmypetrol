@@ -10,12 +10,28 @@ export interface MapHomeProps {
   onSelect: (pumpId: string) => void;
 }
 
-const PUNE = {
-  latitude: 18.5204,
-  longitude: 73.8567,
-  latitudeDelta: 0.22,
-  longitudeDelta: 0.22,
+const INDIA = {
+  latitude: 21.5,
+  longitude: 79.0,
+  latitudeDelta: 22,
+  longitudeDelta: 22,
 };
+
+function regionFor(pumps: Pump[]) {
+  if (pumps.length === 0) return INDIA;
+  const lats = pumps.map((p) => p.lat);
+  const lngs = pumps.map((p) => p.lng);
+  const minLat = Math.min(...lats);
+  const maxLat = Math.max(...lats);
+  const minLng = Math.min(...lngs);
+  const maxLng = Math.max(...lngs);
+  return {
+    latitude: (minLat + maxLat) / 2,
+    longitude: (minLng + maxLng) / 2,
+    latitudeDelta: Math.max((maxLat - minLat) * 1.5, 0.12),
+    longitudeDelta: Math.max((maxLng - minLng) * 1.5, 0.12),
+  };
+}
 
 export default function MapHome({
   pumps,
@@ -24,7 +40,7 @@ export default function MapHome({
   onSelect,
 }: MapHomeProps) {
   return (
-    <MapView style={{ flex: 1 }} initialRegion={PUNE}>
+    <MapView style={{ flex: 1 }} initialRegion={regionFor(pumps)}>
       {pumps.map((pump) => {
         const score = scoreFor(pump.id);
         const selected = pump.id === selectedId;

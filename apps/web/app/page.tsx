@@ -12,7 +12,8 @@ export default async function HomePage() {
         <h1>Check the pump before you fill up</h1>
         <p>
           Trust scores built from geo-verified, photo-backed reports by riders
-          and drivers — not by the oil companies. Currently piloting in Pune.
+          and drivers — not by the oil companies. Now covering Delhi, Mumbai,
+          Bengaluru, Hyderabad, Chennai, Kolkata, Pune, and Ahmedabad.
         </p>
       </section>
       <PumpExplorer pumps={pumps} />
