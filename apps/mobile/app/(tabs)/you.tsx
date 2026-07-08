@@ -1,7 +1,8 @@
-import { ScrollView, Text, View } from "react-native";
-import { Link } from "expo-router";
+import { Pressable, ScrollView, Text, View } from "react-native";
+import { Link, router } from "expo-router";
 import { SIGNALS } from "@tmp/shared";
 import { useStore } from "@/lib/store";
+import { supabase } from "@/lib/supabase";
 import { colors } from "@/lib/theme";
 
 const RIGHTS = [
@@ -20,10 +21,67 @@ const RIGHTS = [
 ];
 
 export default function YouScreen() {
-  const { myReports, pumps } = useStore();
+  const { myReports, pumps, isLive, session } = useStore();
 
   return (
     <ScrollView contentContainerStyle={{ padding: 16, gap: 12 }}>
+      {isLive && (
+        <View
+          style={[
+            card,
+            {
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 10,
+            },
+          ]}
+        >
+          {session ? (
+            <>
+              <Text
+                style={{ fontSize: 13.5, flexShrink: 1 }}
+                numberOfLines={1}
+              >
+                Signed in as{" "}
+                <Text style={{ fontWeight: "700" }}>
+                  {session.user.email}
+                </Text>
+              </Text>
+              <Pressable onPress={() => supabase?.auth.signOut()}>
+                <Text
+                  style={{
+                    color: colors.bad,
+                    fontWeight: "700",
+                    fontSize: 13,
+                  }}
+                >
+                  Sign out
+                </Text>
+              </Pressable>
+            </>
+          ) : (
+            <>
+              <Text style={{ fontSize: 13.5, color: colors.muted, flex: 1 }}>
+                Sign in to file reports
+              </Text>
+              <Pressable
+                onPress={() => router.push("/auth")}
+                style={{
+                  backgroundColor: colors.petrol,
+                  borderRadius: 10,
+                  paddingHorizontal: 14,
+                  paddingVertical: 8,
+                }}
+              >
+                <Text style={{ color: "#fff", fontWeight: "700", fontSize: 13 }}>
+                  Sign in
+                </Text>
+              </Pressable>
+            </>
+          )}
+        </View>
+      )}
       <Text style={label}>My reports</Text>
       {myReports.length === 0 ? (
         <View style={card}>

@@ -27,6 +27,10 @@ interface Capture {
   photoUri: string;
   verification: Verification;
   distanceM: number;
+  lat?: number;
+  lng?: number;
+  capturedAt?: string;
+  mockLocation?: boolean;
 }
 
 interface GpsFix {
@@ -41,8 +45,9 @@ interface GpsFix {
  */
 export default function ReportScreen() {
   const { pumpId } = useLocalSearchParams<{ pumpId: string }>();
-  const { pumps, addReport } = useStore();
+  const { pumps, addReport, isLive, session } = useStore();
   const pump = pumps.find((p) => p.id === pumpId);
+  const [submitting, setSubmitting] = useState(false);
 
   const cameraRef = useRef<CameraView>(null);
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
@@ -110,7 +115,15 @@ export default function ReportScreen() {
           pump.lat,
           pump.lng,
         );
-        setCapture({ photoUri: photo.uri, verification, distanceM });
+        setCapture({
+          photoUri: photo.uri,
+          verification,
+          distanceM,
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+          capturedAt,
+          mockLocation: position.mocked ?? false,
+        });
       } else {
         setCapture({
           photoUri: photo.uri,
@@ -133,37 +146,62 @@ export default function ReportScreen() {
     );
   }
 
-  function submit() {
-    if (!pump || !capture || selected.length === 0) return;
-    addReport({
-      pumpId: pump.id,
-      signals: selected,
-      freeText: freeText.trim() || undefined,
-      litres: litres ? Number(litres) : undefined,
-      amountInr: amount ? Number(amount) : undefined,
-      odoKm: odo ? Number(odo) : undefined,
-      verification: capture.verification,
-      distanceToPumpM:
-        capture.verification === "geo_verified" ? capture.distanceM : undefined,
-      photoUri: capture.photoUri,
-    });
-    Alert.alert(
-      "Report filed",
-      capture.verification === "geo_verified"
-        ? `Geo-verified ${Math.round(capture.distanceM)} m from the pump. You can escalate it into a formal complaint from the You tab.`
-        : "Filed as unverified (location was unavailable or didn't match). It still counts, with lower weight.",
-      [
-        { text: "Done", onPress: () => router.back() },
-        {
-          text: "File formal complaint",
-          onPress: () =>
-            router.replace({
-              pathname: "/complaint/[pumpId]",
-              params: { pumpId: pump.id },
-            }),
-        },
-      ],
-    );
+  async function submit() {
+    if (!pump || !capture || selected.length === 0 || submitting) return;
+    if (isLive && !session) {
+      router.push("/auth");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const result = await addReport({
+        pumpId: pump.id,
+        signals: selected,
+        freeText: freeText.trim() || undefined,
+        litres: litres ? Number(litres) : undefined,
+        amountInr: amount ? Number(amount) : undefined,
+        odoKm: odo ? Number(odo) : undefined,
+        capture:
+          capture.lat != null && capture.lng != null && capture.capturedAt
+            ? {
+                lat: capture.lat,
+                lng: capture.lng,
+                capturedAt: capture.capturedAt,
+                mockLocation: capture.mockLocation ?? false,
+              }
+            : undefined,
+        verification: capture.verification,
+        distanceToPumpM:
+          capture.verification === "geo_verified"
+            ? capture.distanceM
+            : undefined,
+        photoUri: capture.photoUri,
+      });
+      Alert.alert(
+        "Report filed",
+        result.verification === "geo_verified"
+          ? `Geo-verified ${Math.round(result.distanceM ?? 0)} m from the pump. You can escalate it into a formal complaint from the You tab.`
+          : "Filed as unverified (location was unavailable or didn't match). It still counts, with lower weight.",
+        [
+          { text: "Done", onPress: () => router.back() },
+          {
+            text: "File formal complaint",
+            onPress: () =>
+              router.replace({
+                pathname: "/complaint/[pumpId]",
+                params: { pumpId: pump.id },
+              }),
+          },
+        ],
+      );
+    } catch (e) {
+      Alert.alert(
+        "Couldn't file report",
+        e instanceof Error ? e.message : "Something went wrong — try again.",
+      );
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   if (!cameraPermission?.granted) {
@@ -320,18 +358,24 @@ export default function ReportScreen() {
 
       <Pressable
         onPress={submit}
-        disabled={!capture || selected.length === 0}
+        disabled={!capture || selected.length === 0 || submitting}
         style={[
           primaryBtn,
-          (!capture || selected.length === 0) && { opacity: 0.4 },
+          (!capture || selected.length === 0 || submitting) && {
+            opacity: 0.4,
+          },
         ]}
       >
         <Text style={primaryBtnText}>
-          {capture
-            ? selected.length
-              ? "File report"
-              : "Select at least one signal"
-            : "Take a photo first"}
+          {submitting
+            ? "Filing…"
+            : capture
+              ? selected.length
+                ? isLive && !session
+                  ? "Sign in & file report"
+                  : "File report"
+                : "Select at least one signal"
+              : "Take a photo first"}
         </Text>
       </Pressable>
       <Text style={{ fontSize: 11.5, color: colors.muted, textAlign: "center" }}>

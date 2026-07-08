@@ -18,6 +18,10 @@ export default function RootLayout() {
         <Stack.Screen name="pump/[id]" options={{ title: "Pump record" }} />
         <Stack.Screen name="report/[pumpId]" options={{ title: "Report an issue" }} />
         <Stack.Screen name="complaint/[pumpId]" options={{ title: "File a formal complaint" }} />
+        <Stack.Screen
+          name="auth"
+          options={{ title: "Sign in", presentation: "modal" }}
+        />
       </Stack>
     </StoreProvider>
   );

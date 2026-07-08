@@ -10,6 +10,8 @@ import { SEED_PUMPS, SEED_REPORTS, SEED_TRUST_LEVELS } from "@tmp/shared/seed";
 /**
  * Data access with a bundled-seed fallback: when Supabase env vars are absent
  * (local dev, demos), the site runs entirely off packages/shared seed data.
+ * Scores are always computed here with the shared engine — packages/shared
+ * is the single source of truth for the maths.
  */
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -20,37 +22,57 @@ export interface PumpWithScore extends Pump {
   score: PumpScore;
 }
 
-function toScoreInput(r: Report) {
-  return {
-    userId: r.userId,
-    signals: r.signals,
-    verification: r.verification,
-    reporterTrustLevel: SEED_TRUST_LEVELS[r.userId] ?? 0,
-    reportedAt: r.reportedAt,
-  };
+interface Dataset {
+  pumps: Pump[];
+  reports: Report[];
+  seeded: boolean;
 }
 
-export async function getPumpsWithScores(): Promise<PumpWithScore[]> {
+async function loadDataset(): Promise<Dataset> {
   if (supabase) {
-    const [{ data: pumps, error }, { data: scores }] = await Promise.all([
-      supabase.rpc("pumps_near", {
-        in_lat: 18.5204,
-        in_lng: 73.8567,
-        in_radius_m: 30_000,
-      }),
-      supabase.from("pump_scores").select("*"),
+    const since = new Date(Date.now() - 90 * 86_400_000).toISOString();
+    const [pumpsRes, reportsRes] = await Promise.all([
+      supabase.from("pumps").select("*").eq("status", "active"),
+      supabase
+        .from("reports")
+        .select("*")
+        .gte("reported_at", since)
+        .order("reported_at", { ascending: false })
+        .limit(2000),
     ]);
-    if (!error && pumps?.length) {
-      return pumps.map((p: Record<string, unknown>) => mapDbPump(p, scores ?? []));
+    if (!pumpsRes.error && pumpsRes.data?.length) {
+      return {
+        pumps: pumpsRes.data.map(mapDbPump),
+        reports: (reportsRes.data ?? []).map(mapDbReport),
+        seeded: false,
+      };
     }
   }
-  return SEED_PUMPS.map((p) => ({
+  return { pumps: SEED_PUMPS, reports: SEED_REPORTS, seeded: true };
+}
+
+function toScored(dataset: Dataset): PumpWithScore[] {
+  return dataset.pumps.map((p) => ({
     ...p,
     score: computePumpScore(
       p.id,
-      SEED_REPORTS.filter((r) => r.pumpId === p.id).map(toScoreInput),
+      dataset.reports
+        .filter((r) => r.pumpId === p.id)
+        .map((r) => ({
+          userId: r.userId,
+          signals: r.signals,
+          verification: r.verification,
+          reporterTrustLevel: dataset.seeded
+            ? (SEED_TRUST_LEVELS[r.userId] ?? 0)
+            : 0,
+          reportedAt: r.reportedAt,
+        })),
     ),
   }));
+}
+
+export async function getPumpsWithScores(): Promise<PumpWithScore[]> {
+  return toScored(await loadDataset());
 }
 
 export async function getPump(id: string): Promise<PumpWithScore | null> {
@@ -59,32 +81,18 @@ export async function getPump(id: string): Promise<PumpWithScore | null> {
 }
 
 export async function getReports(pumpId: string): Promise<Report[]> {
-  if (supabase) {
-    const { data, error } = await supabase
-      .from("reports")
-      .select("*")
-      .eq("pump_id", pumpId)
-      .eq("status", "published")
-      .order("reported_at", { ascending: false })
-      .limit(20);
-    if (!error && data) return data.map(mapDbReport);
-  }
-  return SEED_REPORTS.filter((r) => r.pumpId === pumpId).sort(
-    (a, b) =>
-      new Date(b.reportedAt).getTime() - new Date(a.reportedAt).getTime(),
-  );
+  const { reports } = await loadDataset();
+  return reports
+    .filter((r) => r.pumpId === pumpId && r.status === "published")
+    .sort(
+      (a, b) =>
+        new Date(b.reportedAt).getTime() - new Date(a.reportedAt).getTime(),
+    );
 }
 
 /* ---- row mappers (snake_case db → camelCase domain) ---- */
 
-function mapDbPump(
-  row: Record<string, unknown>,
-  scores: Record<string, unknown>[],
-): PumpWithScore {
-  const s = scores.find((x) => x.pump_id === row.id);
-  // pumps_near returns geography; Supabase serialises point as GeoJSON via
-  // st_asgeojson in a view in production — seed coordinates cover the demo.
-  const coords = parseLocation(row.location);
+function mapDbPump(row: Record<string, unknown>): Pump {
   return {
     id: String(row.id),
     omc: row.omc as Pump["omc"],
@@ -93,40 +101,11 @@ function mapDbPump(
     address: String(row.address),
     district: String(row.district),
     state: String(row.state),
-    lat: coords?.lat ?? 0,
-    lng: coords?.lng ?? 0,
+    lat: Number(row.lat),
+    lng: Number(row.lng),
     blends: row.blends as Pump["blends"],
     status: row.status as Pump["status"],
-    score: {
-      pumpId: String(row.id),
-      score: (s?.score as number | null) ?? null,
-      verdict:
-        s?.score == null
-          ? null
-          : (s.score as number) >= 80
-            ? "good"
-            : (s.score as number) >= 50
-              ? "mixed"
-              : "poor",
-      reportCount: (s?.report_count_90d as number) ?? 0,
-      countedReports: (s?.counted_reports as number) ?? 0,
-      geoVerifiedRatio: Number(s?.geo_verified_ratio ?? 0),
-      signalCounts: (s?.signal_counts as PumpScore["signalCounts"]) ?? {},
-    },
   };
-}
-
-function parseLocation(loc: unknown): { lat: number; lng: number } | null {
-  if (
-    typeof loc === "object" &&
-    loc !== null &&
-    "coordinates" in loc &&
-    Array.isArray((loc as { coordinates: unknown }).coordinates)
-  ) {
-    const [lng, lat] = (loc as { coordinates: number[] }).coordinates;
-    if (typeof lat === "number" && typeof lng === "number") return { lat, lng };
-  }
-  return null;
 }
 
 function mapDbReport(row: Record<string, unknown>): Report {
