@@ -121,16 +121,27 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const refresh = useCallback(async () => {
     if (!supabase) return;
     const since = new Date(Date.now() - 90 * 86_400_000).toISOString();
-    const [pumpsRes, reportsRes] = await Promise.all([
-      supabase.from("pumps").select("*").eq("status", "active"),
-      supabase
-        .from("reports")
+    // PostgREST caps responses at 1000 rows — paginate the pump inventory
+    const PAGE = 1000;
+    const pumpRows: Record<string, unknown>[] = [];
+    for (let from = 0; ; from += PAGE) {
+      const { data, error } = await supabase
+        .from("pumps")
         .select("*")
-        .gte("reported_at", since)
-        .order("reported_at", { ascending: false })
-        .limit(1000),
-    ]);
-    if (pumpsRes.data) setPumps(pumpsRes.data.map(mapDbPump));
+        .eq("status", "active")
+        .order("id")
+        .range(from, from + PAGE - 1);
+      if (error || !data) break;
+      pumpRows.push(...data);
+      if (data.length < PAGE) break;
+    }
+    const reportsRes = await supabase
+      .from("reports")
+      .select("*")
+      .gte("reported_at", since)
+      .order("reported_at", { ascending: false })
+      .limit(1000);
+    if (pumpRows.length) setPumps(pumpRows.map(mapDbPump));
     if (reportsRes.data) setReports(reportsRes.data.map(mapDbReport));
     setLoading(false);
   }, []);

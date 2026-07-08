@@ -28,21 +28,39 @@ interface Dataset {
   seeded: boolean;
 }
 
+const PAGE = 1000; // PostgREST caps responses at 1000 rows — paginate
+
+async function fetchAllPumps() {
+  const rows: Record<string, unknown>[] = [];
+  for (let from = 0; ; from += PAGE) {
+    const { data, error } = await supabase!
+      .from("pumps")
+      .select("*")
+      .eq("status", "active")
+      .order("id")
+      .range(from, from + PAGE - 1);
+    if (error || !data) break;
+    rows.push(...data);
+    if (data.length < PAGE) break;
+  }
+  return rows;
+}
+
 async function loadDataset(): Promise<Dataset> {
   if (supabase) {
     const since = new Date(Date.now() - 90 * 86_400_000).toISOString();
-    const [pumpsRes, reportsRes] = await Promise.all([
-      supabase.from("pumps").select("*").eq("status", "active"),
+    const [pumpRows, reportsRes] = await Promise.all([
+      fetchAllPumps(),
       supabase
         .from("reports")
         .select("*")
         .gte("reported_at", since)
         .order("reported_at", { ascending: false })
-        .limit(2000),
+        .limit(1000),
     ]);
-    if (!pumpsRes.error && pumpsRes.data?.length) {
+    if (pumpRows.length) {
       return {
-        pumps: pumpsRes.data.map(mapDbPump),
+        pumps: pumpRows.map(mapDbPump),
         reports: (reportsRes.data ?? []).map(mapDbReport),
         seeded: false,
       };
