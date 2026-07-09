@@ -3,7 +3,42 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { displayDealerCode, SIGNALS, type Signal } from "@tmp/shared";
 import { getPump, getReports } from "@/lib/data";
+import { SITE_URL } from "@/lib/site";
 import { ScoreRing } from "@/components/ScoreRing";
+import type { PumpWithScore } from "@/lib/data";
+
+/** schema.org GasStation record so pump pages surface in rich results. */
+function jsonLd(pump: PumpWithScore) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "GasStation",
+    "@id": `${SITE_URL}/pump/${pump.id}`,
+    url: `${SITE_URL}/pump/${pump.id}`,
+    name: pump.name,
+    brand: pump.omc,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: pump.address,
+      addressLocality: pump.district,
+      addressRegion: pump.state,
+      addressCountry: "IN",
+    },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: pump.lat,
+      longitude: pump.lng,
+    },
+    ...(pump.score.score !== null && {
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: pump.score.score,
+        bestRating: 100,
+        worstRating: 0,
+        ratingCount: pump.score.countedReports,
+      },
+    }),
+  };
+}
 
 // Rendered on demand with ISR — with thousands of imported pumps,
 // prebuilding every page would blow up build times.
@@ -18,9 +53,13 @@ export async function generateMetadata({
   const { id } = await params;
   const pump = await getPump(id);
   if (!pump) return {};
+  const title = `${pump.name}, ${pump.district} — reviews & fuel quality reports`;
+  const description = `Crowd-verified fuel quality record for ${pump.name} (${pump.omc}${displayDealerCode(pump.dealerCode) ? `, dealer ${displayDealerCode(pump.dealerCode)}` : ""}), ${pump.address}, ${pump.district}.`;
   return {
-    title: `${pump.name}, ${pump.district} — reviews & fuel quality reports`,
-    description: `Crowd-verified fuel quality record for ${pump.name} (${pump.omc}${displayDealerCode(pump.dealerCode) ? `, dealer ${displayDealerCode(pump.dealerCode)}` : ""}), ${pump.address}, ${pump.district}.`,
+    title,
+    description,
+    alternates: { canonical: `/pump/${pump.id}` },
+    openGraph: { title, description, type: "website" },
   };
 }
 
@@ -45,6 +84,10 @@ export default async function PumpPage({
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd(pump)) }}
+      />
       <div className="detail-head">
         <div>
           <div className="pump-meta">

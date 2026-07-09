@@ -1,15 +1,32 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Analytics } from "@vercel/analytics/next";
 import AuthButton from "@/components/AuthButton";
+import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "TrustMyPetrol — fuel quality, crowd-verified",
     template: "%s · TrustMyPetrol",
   },
   description:
     "Geo-verified, photo-backed fuel quality reports for petrol pumps across India. Check a pump's record before you fill up.",
+  openGraph: {
+    type: "website",
+    siteName: "TrustMyPetrol",
+    title: "TrustMyPetrol — fuel quality, crowd-verified",
+    description:
+      "Geo-verified fuel quality reports for 2,300+ petrol pumps across 8 Indian metros. Check a pump's record before you fill up.",
+    locale: "en_IN",
+  },
+  twitter: {
+    card: "summary",
+    title: "TrustMyPetrol — fuel quality, crowd-verified",
+    description:
+      "Geo-verified fuel quality reports for 2,300+ petrol pumps across 8 Indian metros.",
+  },
 };
 
 export default function RootLayout({
@@ -60,6 +77,7 @@ export default function RootLayout({
             </span>
           </div>
         </footer>
+        <Analytics />
       </body>
     </html>
   );
