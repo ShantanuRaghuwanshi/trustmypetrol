@@ -20,6 +20,13 @@ export function distanceMeters(
   return 2 * R * Math.asin(Math.sqrt(h));
 }
 
+/** Human-readable distance: "850 m", "1.2 km", "23 km". */
+export function formatDistance(m: number): string {
+  if (m < 1000) return `${Math.round(m)} m`;
+  if (m < 10_000) return `${(m / 1000).toFixed(1)} km`;
+  return `${Math.round(m / 1000)} km`;
+}
+
 export interface CaptureEvidence {
   lat: number;
   lng: number;

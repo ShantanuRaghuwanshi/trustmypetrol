@@ -1,8 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { displayDealerCode, CITY_NAMES } from "@tmp/shared";
+import {
+  displayDealerCode,
+  distanceMeters,
+  formatDistance,
+  CITY_NAMES,
+} from "@tmp/shared";
 import type { PumpWithScore } from "@/lib/data";
 import { ScorePill } from "@/components/ScorePill";
 import PumpMapLoader from "@/components/PumpMapLoader";
@@ -21,6 +26,52 @@ export default function PumpExplorer({ pumps }: { pumps: PumpWithScore[] }) {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
   const [city, setCity] = useState(""); // "" = all India
+  const [userLoc, setUserLoc] = useState<{ lat: number; lng: number } | null>(
+    null,
+  );
+  const [nearMe, setNearMe] = useState(false);
+  const [locating, setLocating] = useState(false);
+  const [locDenied, setLocDenied] = useState(false);
+
+  const locate = useCallback((silent: boolean) => {
+    if (!navigator.geolocation) return;
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setUserLoc({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setNearMe(true);
+        setLocDenied(false);
+        setLocating(false);
+      },
+      () => {
+        setLocating(false);
+        if (!silent) setLocDenied(true);
+      },
+      { maximumAge: 60_000, timeout: 10_000 },
+    );
+  }, []);
+
+  // if the browser has already granted location, sort by distance right away
+  // without prompting; otherwise wait for the "Near me" chip
+  useEffect(() => {
+    if (!navigator.geolocation || !navigator.permissions?.query) return;
+    navigator.permissions
+      .query({ name: "geolocation" })
+      .then((s) => {
+        if (s.state === "granted") locate(true);
+      })
+      .catch(() => {});
+  }, [locate]);
+
+  const distances = useMemo(() => {
+    if (!userLoc) return null;
+    return new Map(
+      pumps.map((p) => [
+        p.id,
+        distanceMeters(userLoc.lat, userLoc.lng, p.lat, p.lng),
+      ]),
+    );
+  }, [pumps, userLoc]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -42,14 +93,17 @@ export default function PumpExplorer({ pumps }: { pumps: PumpWithScore[] }) {
     )
       ? 1
       : 0;
-  const sorted = [...filtered].sort(
-    (a, b) =>
-      (b.score.score ?? -1) - (a.score.score ?? -1) ||
-      b.score.reportCount - a.score.reportCount ||
-      generic(a) - generic(b) ||
-      a.name.localeCompare(b.name),
+  const byDistance = nearMe && distances !== null;
+  const sorted = [...filtered].sort((a, b) =>
+    byDistance
+      ? distances.get(a.id)! - distances.get(b.id)!
+      : (b.score.score ?? -1) - (a.score.score ?? -1) ||
+        b.score.reportCount - a.score.reportCount ||
+        generic(a) - generic(b) ||
+        a.name.localeCompare(b.name),
   );
   const visible = sorted.slice(0, GRID_CAP);
+  const nearest = byDistance ? sorted[0] : undefined;
 
   return (
     <>
@@ -61,6 +115,17 @@ export default function PumpExplorer({ pumps }: { pumps: PumpWithScore[] }) {
           onChange={(e) => setQuery(e.target.value)}
         />
         <div className="chips">
+          <button
+            type="button"
+            className={`chip-toggle${nearMe ? " on" : ""}`}
+            onClick={() => {
+              if (nearMe) setNearMe(false);
+              else if (userLoc) setNearMe(true);
+              else locate(false);
+            }}
+          >
+            {locating ? "Locating…" : "📍 Near me"}
+          </button>
           <button
             type="button"
             className={`chip-toggle${city === "" ? " on" : ""}`}
@@ -97,8 +162,18 @@ export default function PumpExplorer({ pumps }: { pumps: PumpWithScore[] }) {
         <PumpMapLoader key={city || "all"} pumps={filtered} />
       </div>
 
+      {locDenied && (
+        <div className="section-label">
+          Location unavailable — allow location access in your browser to sort
+          pumps by distance.
+        </div>
+      )}
       <div className="section-label">
-        {filtered.length} pumps · scores over the last 90 days
+        {nearest && distances
+          ? `Nearest: ${nearest.name} · ${formatDistance(distances.get(nearest.id)!)} away · `
+          : ""}
+        {filtered.length} pumps ·{" "}
+        {byDistance ? "sorted by distance" : "scores over the last 90 days"}
         {filtered.length > visible.length &&
           ` · showing ${visible.length} — search or filter to narrow`}
       </div>
@@ -110,6 +185,8 @@ export default function PumpExplorer({ pumps }: { pumps: PumpWithScore[] }) {
               <ScorePill score={p.score} />
             </div>
             <div className="pump-meta">
+              {distances?.has(p.id) &&
+                `${formatDistance(distances.get(p.id)!)} away · `}
               {p.omc} · {p.address}
               {displayDealerCode(p.dealerCode) && ` · dealer ${displayDealerCode(p.dealerCode)}`}
             </div>

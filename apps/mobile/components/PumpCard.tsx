@@ -1,5 +1,5 @@
 import { Pressable, Text, View } from "react-native";
-import { displayDealerCode } from "@tmp/shared";
+import { displayDealerCode, formatDistance } from "@tmp/shared";
 import { Link } from "expo-router";
 import type { Pump, PumpScore } from "@tmp/shared";
 import { colors } from "@/lib/theme";
@@ -42,10 +42,12 @@ export function PumpCard({
   pump,
   score,
   compact,
+  distanceM,
 }: {
   pump: Pump;
   score: PumpScore;
   compact?: boolean;
+  distanceM?: number;
 }) {
   return (
     <Link href={{ pathname: "/pump/[id]", params: { id: pump.id } }} asChild>
@@ -81,6 +83,7 @@ export function PumpCard({
           <ScorePill score={score} />
         </View>
         <Text style={{ color: colors.muted, fontSize: 12.5 }} numberOfLines={1}>
+          {distanceM != null ? `${formatDistance(distanceM)} away · ` : ""}
           {pump.omc} · {pump.address}
           {displayDealerCode(pump.dealerCode) ? ` · dealer ${displayDealerCode(pump.dealerCode)}` : ""}
         </Text>

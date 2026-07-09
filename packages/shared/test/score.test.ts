@@ -6,7 +6,7 @@ import {
   scoreVerdict,
   type ScorableReport,
 } from "../src/score";
-import { classifyCapture, distanceMeters } from "../src/geo";
+import { classifyCapture, distanceMeters, formatDistance } from "../src/geo";
 import { draftGrievance } from "../src/complaint";
 import { SEED_PUMPS, SEED_REPORTS, SEED_TRUST_LEVELS } from "../src/seed";
 
@@ -153,6 +153,13 @@ describe("geo verification", () => {
     // ~1 degree latitude ≈ 111 km
     expect(distanceMeters(18.0, 73.0, 19.0, 73.0)).toBeGreaterThan(110_000);
     expect(distanceMeters(18.0, 73.0, 19.0, 73.0)).toBeLessThan(112_000);
+  });
+
+  it("formats distances for display", () => {
+    expect(formatDistance(0)).toBe("0 m");
+    expect(formatDistance(849.6)).toBe("850 m");
+    expect(formatDistance(1_240)).toBe("1.2 km");
+    expect(formatDistance(23_400)).toBe("23 km");
   });
 
   it("verifies a close, prompt, non-mocked capture", () => {
