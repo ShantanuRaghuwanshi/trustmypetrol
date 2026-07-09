@@ -159,7 +159,12 @@ export default function PumpExplorer({ pumps }: { pumps: PumpWithScore[] }) {
       </div>
 
       <div className="map-panel">
-        <PumpMapLoader key={city || "all"} pumps={filtered} />
+        <PumpMapLoader
+          key={`${city || "all"}-${byDistance ? "near" : "score"}`}
+          pumps={filtered}
+          userLoc={userLoc}
+          nearMe={byDistance}
+        />
       </div>
 
       {locDenied && (

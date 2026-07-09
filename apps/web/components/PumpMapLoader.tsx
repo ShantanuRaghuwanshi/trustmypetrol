@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import type { PumpWithScore } from "@/lib/data";
+import type { UserLoc } from "./PumpMap";
 
 // Leaflet touches `window` at import time — client-only.
 const PumpMap = dynamic(() => import("./PumpMap"), {
@@ -19,6 +20,14 @@ const PumpMap = dynamic(() => import("./PumpMap"), {
   ),
 });
 
-export default function PumpMapLoader({ pumps }: { pumps: PumpWithScore[] }) {
-  return <PumpMap pumps={pumps} />;
+export default function PumpMapLoader({
+  pumps,
+  userLoc,
+  nearMe,
+}: {
+  pumps: PumpWithScore[];
+  userLoc?: UserLoc | null;
+  nearMe?: boolean;
+}) {
+  return <PumpMap pumps={pumps} userLoc={userLoc} nearMe={nearMe} />;
 }

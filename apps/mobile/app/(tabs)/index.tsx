@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Platform, Pressable, Text, TextInput, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import * as Location from "expo-location";
 import { useStore } from "@/lib/store";
 import { colors } from "@/lib/theme";
 import { PumpCard } from "@/components/PumpCard";
@@ -23,6 +24,31 @@ export default function MapScreen() {
   const [filter, setFilter] = useState<Filter>("all");
   const [city, setCity] = useState("Pune");
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [userLoc, setUserLoc] = useState<{ lat: number; lng: number } | null>(
+    null,
+  );
+
+  // if location is already granted, show the user on the map and center
+  // there — never prompts; the report flow / pumps tab handle requesting
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const perm = await Location.getForegroundPermissionsAsync();
+        if (perm.status !== "granted") return;
+        const pos = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Balanced,
+        });
+        if (!cancelled)
+          setUserLoc({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+      } catch {
+        // location unavailable — map keeps the city fit
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -103,11 +129,12 @@ export default function MapScreen() {
 
       <View style={{ flex: 1 }}>
         <MapHome
-          key={city || "all"}
+          key={`${city || "all"}${userLoc ? "-located" : ""}`}
           pumps={filtered}
           scoreFor={scoreFor}
           selectedId={selected?.id ?? null}
           onSelect={setSelectedId}
+          userLoc={userLoc}
         />
         {Platform.OS !== "web" && selected && (
           <View

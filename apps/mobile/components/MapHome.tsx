@@ -8,6 +8,7 @@ export interface MapHomeProps {
   scoreFor: (pumpId: string) => PumpScore;
   selectedId: string | null;
   onSelect: (pumpId: string) => void;
+  userLoc?: { lat: number; lng: number } | null;
 }
 
 const INDIA = {
@@ -37,18 +38,48 @@ function regionFor(pumps: Pump[]) {
 // clustering lands. The list tabs still show everything (virtualised).
 const MAX_MARKERS = 250;
 
+/**
+ * Center on the user when they're inside the fitted pump region (i.e. they
+ * are actually in the selected city); otherwise keep the pump fit so a city
+ * chip still frames that city.
+ */
+function regionWithUser(
+  pumps: Pump[],
+  userLoc: MapHomeProps["userLoc"],
+) {
+  const region = regionFor(pumps);
+  if (!userLoc) return region;
+  const inLat =
+    Math.abs(userLoc.lat - region.latitude) <= region.latitudeDelta / 2;
+  const inLng =
+    Math.abs(userLoc.lng - region.longitude) <= region.longitudeDelta / 2;
+  if (!inLat || !inLng) return region;
+  return {
+    latitude: userLoc.lat,
+    longitude: userLoc.lng,
+    latitudeDelta: 0.06,
+    longitudeDelta: 0.06,
+  };
+}
+
 export default function MapHome({
   pumps: allPumps,
   scoreFor,
   selectedId,
   onSelect,
+  userLoc,
 }: MapHomeProps) {
   const pumps =
     allPumps.length <= MAX_MARKERS
       ? allPumps
       : allPumps.slice(0, MAX_MARKERS);
   return (
-    <MapView style={{ flex: 1 }} initialRegion={regionFor(pumps)}>
+    <MapView
+      style={{ flex: 1 }}
+      initialRegion={regionWithUser(pumps, userLoc)}
+      showsUserLocation={!!userLoc}
+      showsMyLocationButton={!!userLoc}
+    >
       {pumps.map((pump) => {
         const score = scoreFor(pump.id);
         const selected = pump.id === selectedId;
