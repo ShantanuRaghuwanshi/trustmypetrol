@@ -208,7 +208,7 @@ export default function ReportScreen() {
     return (
       <View style={{ padding: 20, gap: 14 }}>
         <Text style={{ fontSize: 15, lineHeight: 22 }}>
-          Reports on TrustMyPetrol carry weight because photos are taken live,
+          Reports on JanSetu carry weight because photos are taken live,
           at the pump. That needs the camera.
         </Text>
         <Pressable style={primaryBtn} onPress={requestCameraPermission}>

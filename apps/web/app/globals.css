@@ -1,6 +1,7 @@
 :root {
-  --petrol: #0e6b72;
-  --petrol-deep: #0a4e54;
+  /* JanSetu brand: setu blue. Legacy var names kept; mirrors lib/theme.ts. */
+  --petrol: #1b4f8a;
+  --petrol-deep: #123a66;
   --amber: #e8a13d;
   --ink: #20282a;
   --muted: #5b6a6c;

@@ -17,7 +17,7 @@ const RIGHTS = [
   },
   {
     title: "Blend labelling",
-    body: "Dispensers selling E20 must display blend labelling. Missing or unclear labelling is reportable — it's one of the signal chips on a TrustMyPetrol report.",
+    body: "Dispensers selling E20 must display blend labelling. Missing or unclear labelling is reportable — it's one of the signal chips on a JanSetu report.",
   },
   {
     title: "Price display",

@@ -16,7 +16,7 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: "Map",
-          headerTitle: "TrustMyPetrol",
+          headerTitle: "JanSetu",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? "location" : "location-outline"}
@@ -33,6 +33,20 @@ export default function TabsLayout() {
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? "list" : "list-outline"}
+              size={21}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="civic"
+        options={{
+          title: "Civic",
+          headerTitle: "Civic issues",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "construct" : "construct-outline"}
               size={21}
               color={color}
             />

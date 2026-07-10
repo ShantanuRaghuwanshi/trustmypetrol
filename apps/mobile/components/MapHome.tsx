@@ -1,7 +1,8 @@
 import { Text, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import type { Pump, PumpScore } from "@tmp/shared";
-import { verdictColor } from "@/lib/theme";
+import type { CivicIssue } from "@tmp/civic";
+import { colors, verdictColor } from "@/lib/theme";
 
 export interface MapHomeProps {
   pumps: Pump[];
@@ -9,6 +10,9 @@ export interface MapHomeProps {
   selectedId: string | null;
   onSelect: (pumpId: string) => void;
   userLoc?: { lat: number; lng: number } | null;
+  /** Civic layer: open issues rendered as amber pins alongside the pumps. */
+  issues?: CivicIssue[];
+  onSelectIssue?: (issueId: string) => void;
 }
 
 const INDIA = {
@@ -18,10 +22,10 @@ const INDIA = {
   longitudeDelta: 22,
 };
 
-function regionFor(pumps: Pump[]) {
-  if (pumps.length === 0) return INDIA;
-  const lats = pumps.map((p) => p.lat);
-  const lngs = pumps.map((p) => p.lng);
+function regionFor(pts: { lat: number; lng: number }[]) {
+  if (pts.length === 0) return INDIA;
+  const lats = pts.map((p) => p.lat);
+  const lngs = pts.map((p) => p.lng);
   const minLat = Math.min(...lats);
   const maxLat = Math.max(...lats);
   const minLng = Math.min(...lngs);
@@ -44,10 +48,10 @@ const MAX_MARKERS = 250;
  * chip still frames that city.
  */
 function regionWithUser(
-  pumps: Pump[],
+  pts: { lat: number; lng: number }[],
   userLoc: MapHomeProps["userLoc"],
 ) {
-  const region = regionFor(pumps);
+  const region = regionFor(pts);
   if (!userLoc) return region;
   const inLat =
     Math.abs(userLoc.lat - region.latitude) <= region.latitudeDelta / 2;
@@ -68,15 +72,22 @@ export default function MapHome({
   selectedId,
   onSelect,
   userLoc,
+  issues: allIssues,
+  onSelectIssue,
 }: MapHomeProps) {
   const pumps =
     allPumps.length <= MAX_MARKERS
       ? allPumps
       : allPumps.slice(0, MAX_MARKERS);
+  // Civic pins share the marker budget; unresolved issues surface first
+  // in the civic tab's list regardless.
+  const issues = (allIssues ?? [])
+    .filter((i) => i.status !== "resolved")
+    .slice(0, Math.max(0, MAX_MARKERS - pumps.length));
   return (
     <MapView
       style={{ flex: 1 }}
-      initialRegion={regionWithUser(pumps, userLoc)}
+      initialRegion={regionWithUser([...pumps, ...issues], userLoc)}
       showsUserLocation={!!userLoc}
       showsMyLocationButton={!!userLoc}
     >
@@ -121,6 +132,45 @@ export default function MapHome({
           </Marker>
         );
       })}
+      {issues.map((issue) => (
+        <Marker
+          key={issue.id}
+          coordinate={{ latitude: issue.lat, longitude: issue.lng }}
+          onPress={() => onSelectIssue?.(issue.id)}
+          anchor={{ x: 0.5, y: 0.5 }}
+        >
+          <View
+            style={{
+              width: 26,
+              height: 26,
+              borderRadius: 7,
+              transform: [{ rotate: "45deg" }],
+              backgroundColor: colors.amber,
+              borderWidth: 2,
+              borderColor: "#fff",
+              alignItems: "center",
+              justifyContent: "center",
+              shadowColor: "#000",
+              shadowOpacity: 0.3,
+              shadowRadius: 3,
+              shadowOffset: { width: 0, height: 2 },
+              elevation: 3,
+            }}
+          >
+            <Text
+              style={{
+                transform: [{ rotate: "-45deg" }],
+                color: "#fff",
+                fontWeight: "800",
+                fontSize: 11,
+                fontVariant: ["tabular-nums"],
+              }}
+            >
+              {issue.reportCount > 9 ? "9+" : issue.reportCount}
+            </Text>
+          </View>
+        </Marker>
+      ))}
     </MapView>
   );
 }

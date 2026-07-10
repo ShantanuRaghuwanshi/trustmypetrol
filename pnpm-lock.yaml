@@ -29,6 +29,9 @@ importers:
       '@supabase/supabase-js':
         specifier: ^2.110.1
         version: 2.110.1
+      '@tmp/civic':
+        specifier: workspace:*
+        version: link:../../packages/civic
       '@tmp/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -102,6 +105,9 @@ importers:
       '@supabase/supabase-js':
         specifier: ^2.49.0
         version: 2.110.1
+      '@tmp/civic':
+        specifier: workspace:*
+        version: link:../../packages/civic
       '@tmp/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -139,6 +145,22 @@ importers:
       typescript:
         specifier: ^5.8.0
         version: 5.9.3
+
+  packages/civic:
+    dependencies:
+      '@tmp/shared':
+        specifier: workspace:*
+        version: link:../shared
+      zod:
+        specifier: ^3.24.0
+        version: 3.25.76
+    devDependencies:
+      typescript:
+        specifier: ^5.8.0
+        version: 5.8.3
+      vitest:
+        specifier: ^3.1.0
+        version: 3.2.7(@types/node@22.20.0)(lightningcss@1.27.0)(terser@5.48.0)
 
   packages/shared:
     dependencies:

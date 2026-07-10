@@ -8,24 +8,24 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "TrustMyPetrol — fuel quality, crowd-verified",
-    template: "%s · TrustMyPetrol",
+    default: "JanSetu — your city, on the record",
+    template: "%s · JanSetu",
   },
   description:
-    "Geo-verified, photo-backed fuel quality reports for petrol pumps across India. Check a pump's record before you fill up.",
+    "Geo-verified, photo-backed citizen reports across India — petrol pump quality, potholes, drainage, streetlights — routed to the responsible agency, escalated to CPGRAMS, and matched to the contractor on record.",
   openGraph: {
     type: "website",
-    siteName: "TrustMyPetrol",
-    title: "TrustMyPetrol — fuel quality, crowd-verified",
+    siteName: "JanSetu",
+    title: "JanSetu — your city, on the record",
     description:
-      "Geo-verified fuel quality reports for 2,300+ petrol pumps across 8 Indian metros. Check a pump's record before you fill up.",
+      "Fuel-quality trust scores for 2,300+ pumps and civic issue accountability across 8 Indian metros — geo-verified reports, agency routing, RTI and contractor records.",
     locale: "en_IN",
   },
   twitter: {
     card: "summary",
-    title: "TrustMyPetrol — fuel quality, crowd-verified",
+    title: "JanSetu — your city, on the record",
     description:
-      "Geo-verified fuel quality reports for 2,300+ petrol pumps across 8 Indian metros.",
+      "Geo-verified fuel and civic accountability across 8 Indian metros.",
   },
 };
 
@@ -40,10 +40,11 @@ export default function RootLayout({
         <header className="site-header">
           <div className="inner">
             <Link href="/" className="brand">
-              ⛽ TrustMyPetrol
+              🌉 JanSetu
             </Link>
             <nav className="site-nav">
               <Link href="/">Pumps</Link>
+              <Link href="/civic">Civic</Link>
               <Link href="/rights">Your rights</Link>
               <AuthButton />
             </nav>

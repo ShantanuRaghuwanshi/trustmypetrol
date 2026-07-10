@@ -15,6 +15,7 @@
     "@expo/vector-icons": "^14.1.0",
     "@react-native-async-storage/async-storage": "2.1.2",
     "@supabase/supabase-js": "^2.110.1",
+    "@tmp/civic": "workspace:*",
     "@tmp/shared": "workspace:*",
     "base64-arraybuffer": "^1.0.2",
     "expo": "~53.0.0",

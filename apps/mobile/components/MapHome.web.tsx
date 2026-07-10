@@ -12,7 +12,7 @@ export default function MapHome({ pumps, scoreFor }: MapHomeProps) {
     <ScrollView contentContainerStyle={{ padding: 14, gap: 10 }}>
       <Text style={{ color: colors.muted, fontSize: 12.5 }}>
         The map view is available in the Android/iOS app. Showing the list —
-        the full web map is on the TrustMyPetrol website.
+        the full web map is on the JanSetu website.
       </Text>
       {pumps.map((p) => (
         <PumpCard key={p.id} pump={p} score={scoreFor(p.id)} />

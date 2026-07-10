@@ -1,11 +1,16 @@
 import { useMemo, useState } from "react";
 import { FlatList, Pressable, Text, View } from "react-native";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useStore } from "@/lib/store";
 import { colors } from "@/lib/theme";
 import { CityChips } from "@/components/CityChips";
 
+/**
+ * Universal report entry — one habit: see something → Report. Branches to
+ * the civic flow, the project-board flow, or (below) a fuel report at a
+ * pump. Every branch is the same camera-first, GPS-verified capture.
+ */
 export default function ReportChooserScreen() {
   const { pumps } = useStore();
   const [city, setCity] = useState("");
@@ -28,6 +33,41 @@ export default function ReportChooserScreen() {
       contentContainerStyle={{ padding: 14, gap: 10 }}
       ListHeaderComponent={
         <View style={{ gap: 10, marginBottom: 4 }}>
+          <Pressable
+            style={bigAction}
+            onPress={() => router.push("/civic/report")}
+          >
+            <View style={[bigIcon, { backgroundColor: "#FDF3E3" }]}>
+              <Ionicons name="construct" size={20} color={colors.amber} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={bigTitle}>Civic issue</Text>
+              <Text style={bigHint}>
+                Pothole, choked drain, open manhole, streetlight — routed to
+                the responsible agency
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={17} color={colors.muted} />
+          </Pressable>
+
+          <Pressable
+            style={bigAction}
+            onPress={() => router.push("/civic/board")}
+          >
+            <View style={[bigIcon, { backgroundColor: "#E9EFF8" }]}>
+              <Ionicons name="clipboard" size={19} color={colors.brand} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={bigTitle}>Project board</Text>
+              <Text style={bigHint}>
+                Snap a work-site board — logs the contractor and defect
+                liability period
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={17} color={colors.muted} />
+          </Pressable>
+
+          <Text style={sectionLabel}>Fuel issue — pick your pump</Text>
           <CityChips city={city} onChange={setCity} />
           <Text
             style={{
@@ -63,7 +103,7 @@ export default function ReportChooserScreen() {
                 width: 38,
                 height: 38,
                 borderRadius: 19,
-                backgroundColor: "#EDF3F2",
+                backgroundColor: "#E9EFF8",
                 alignItems: "center",
                 justifyContent: "center",
               }}
@@ -85,3 +125,44 @@ export default function ReportChooserScreen() {
     />
   );
 }
+
+const bigAction = {
+  backgroundColor: colors.card,
+  borderColor: colors.line,
+  borderWidth: 1,
+  borderRadius: 16,
+  padding: 16,
+  flexDirection: "row" as const,
+  alignItems: "center" as const,
+  gap: 12,
+};
+
+const bigIcon = {
+  width: 42,
+  height: 42,
+  borderRadius: 21,
+  alignItems: "center" as const,
+  justifyContent: "center" as const,
+};
+
+const bigTitle = {
+  fontWeight: "800" as const,
+  fontSize: 15.5,
+  color: colors.ink,
+};
+
+const bigHint = {
+  color: colors.muted,
+  fontSize: 12,
+  lineHeight: 16,
+  marginTop: 2,
+};
+
+const sectionLabel = {
+  fontSize: 11,
+  letterSpacing: 1.4,
+  textTransform: "uppercase" as const,
+  color: colors.muted,
+  fontWeight: "700" as const,
+  marginTop: 10,
+};

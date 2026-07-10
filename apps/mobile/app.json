@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "TrustMyPetrol",
+    "name": "JanSetu",
     "slug": "trustmypetrol",
     "version": "1.0.0",
     "scheme": "trustmypetrol",
@@ -23,7 +23,7 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "monochromeImage": "./assets/monochrome-icon.png",
-        "backgroundColor": "#0E6B72"
+        "backgroundColor": "#1B4F8A"
       },
       "permissions": [
         "CAMERA",

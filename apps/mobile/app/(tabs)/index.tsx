@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Platform, Pressable, Text, TextInput, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as Location from "expo-location";
+import { router } from "expo-router";
+import { useCivicStore } from "@/lib/civicStore";
 import { useStore } from "@/lib/store";
 import { colors } from "@/lib/theme";
 import { PumpCard } from "@/components/PumpCard";
@@ -18,10 +20,21 @@ const FILTERS: { id: Filter; label: string }[] = [
   { id: "cng", label: "CNG" },
 ];
 
+/** One map, layered: pumps and civic issues are toggles, not silos. */
+type Layer = "all" | "pumps" | "civic";
+
+const LAYERS: { id: Layer; label: string }[] = [
+  { id: "all", label: "Everything" },
+  { id: "pumps", label: "⛽ Pumps" },
+  { id: "civic", label: "🚧 Civic issues" },
+];
+
 export default function MapScreen() {
   const { pumps, scoreFor } = useStore();
+  const { issues } = useCivicStore();
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
+  const [layer, setLayer] = useState<Layer>("all");
   const [city, setCity] = useState("Pune");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [userLoc, setUserLoc] = useState<{ lat: number; lng: number } | null>(
@@ -96,6 +109,37 @@ export default function MapScreen() {
           }}
         />
         <View style={{ flexDirection: "row", gap: 7, flexWrap: "wrap" }}>
+          {LAYERS.map((l) => {
+            const on = layer === l.id;
+            return (
+              <Pressable
+                key={l.id}
+                onPress={() => setLayer(l.id)}
+                style={{
+                  backgroundColor: on ? colors.ink : colors.card,
+                  borderColor: on ? colors.ink : "#CBD6D4",
+                  borderWidth: 1,
+                  borderRadius: 999,
+                  paddingHorizontal: 12,
+                  paddingVertical: 8,
+                }}
+                hitSlop={6}
+              >
+                <Text
+                  style={{
+                    color: on ? "#fff" : "#33484A",
+                    fontSize: 12,
+                    fontWeight: "600",
+                  }}
+                >
+                  {l.label}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+        {layer !== "civic" && (
+        <View style={{ flexDirection: "row", gap: 7, flexWrap: "wrap" }}>
           {FILTERS.map((f) => {
             const on = filter === f.id;
             return (
@@ -125,18 +169,26 @@ export default function MapScreen() {
             );
           })}
         </View>
+        )}
       </View>
 
       <View style={{ flex: 1 }}>
         <MapHome
-          key={`${city || "all"}${userLoc ? "-located" : ""}`}
-          pumps={filtered}
+          key={`${city || "all"}-${layer}${userLoc ? "-located" : ""}`}
+          pumps={layer === "civic" ? [] : filtered}
           scoreFor={scoreFor}
           selectedId={selected?.id ?? null}
           onSelect={setSelectedId}
           userLoc={userLoc}
+          issues={layer === "pumps" ? [] : issues}
+          onSelectIssue={(issueId) =>
+            router.push({
+              pathname: "/civic/issue/[id]",
+              params: { id: issueId },
+            })
+          }
         />
-        {Platform.OS !== "web" && selected && (
+        {Platform.OS !== "web" && layer !== "civic" && selected && (
           <View
             style={{
               position: "absolute",

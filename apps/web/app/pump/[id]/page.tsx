@@ -191,7 +191,7 @@ export default async function PumpPage({
           <div className="cta-note">
             <strong>Know your rights:</strong> every customer can ask for the
             5-litre measure check and the filter-paper density test at the
-            pump, free of charge. Reports are filed from the TrustMyPetrol app
+            pump, free of charge. Reports are filed from the JanSetu app
             with live, geo-tagged photos.
           </div>
         </aside>

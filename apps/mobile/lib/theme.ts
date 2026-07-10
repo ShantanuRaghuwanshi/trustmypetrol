@@ -1,6 +1,13 @@
+/**
+ * JanSetu brand tokens. `petrol` is the legacy key used across the app — it
+ * now carries the setu-blue brand colour (one swap recolours everything);
+ * prefer `brand` in new code. Mirrors :root in apps/web/app/globals.css.
+ */
 export const colors = {
-  petrol: "#0E6B72",
-  petrolDeep: "#0A4E54",
+  brand: "#1B4F8A",
+  brandDeep: "#123A66",
+  petrol: "#1B4F8A",
+  petrolDeep: "#123A66",
   amber: "#E8A13D",
   ink: "#212A2C",
   muted: "#7B8A8C",

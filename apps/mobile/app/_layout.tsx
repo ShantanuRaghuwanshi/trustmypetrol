@@ -1,28 +1,34 @@
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { CivicStoreProvider } from "@/lib/civicStore";
 import { StoreProvider } from "@/lib/store";
 import { colors } from "@/lib/theme";
 
 export default function RootLayout() {
   return (
     <StoreProvider>
-      <StatusBar style="dark" />
-      <Stack
-        screenOptions={{
-          headerTintColor: colors.petrol,
-          headerTitleStyle: { fontWeight: "700" },
-          contentStyle: { backgroundColor: colors.paper },
-        }}
-      >
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="pump/[id]" options={{ title: "Pump record" }} />
-        <Stack.Screen name="report/[pumpId]" options={{ title: "Report an issue" }} />
-        <Stack.Screen name="complaint/[pumpId]" options={{ title: "File a formal complaint" }} />
-        <Stack.Screen
-          name="auth"
-          options={{ title: "Sign in", presentation: "modal" }}
-        />
-      </Stack>
+      <CivicStoreProvider>
+        <StatusBar style="dark" />
+        <Stack
+          screenOptions={{
+            headerTintColor: colors.petrol,
+            headerTitleStyle: { fontWeight: "700" },
+            contentStyle: { backgroundColor: colors.paper },
+          }}
+        >
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="pump/[id]" options={{ title: "Pump record" }} />
+          <Stack.Screen name="report/[pumpId]" options={{ title: "Report an issue" }} />
+          <Stack.Screen name="complaint/[pumpId]" options={{ title: "File a formal complaint" }} />
+          <Stack.Screen name="civic/report" options={{ title: "Report a civic issue" }} />
+          <Stack.Screen name="civic/board" options={{ title: "Snap a project board" }} />
+          <Stack.Screen name="civic/issue/[id]" options={{ title: "Civic issue" }} />
+          <Stack.Screen
+            name="auth"
+            options={{ title: "Sign in", presentation: "modal" }}
+          />
+        </Stack>
+      </CivicStoreProvider>
     </StoreProvider>
   );
 }
