@@ -2,7 +2,7 @@ import { Pressable, Text, View } from "react-native";
 import { displayDealerCode, formatDistance } from "@tmp/shared";
 import { Link } from "expo-router";
 import type { Pump, PumpScore } from "@tmp/shared";
-import { colors } from "@/lib/theme";
+import { colors, elevation, shape } from "@/lib/theme";
 import { ScorePill } from "@/components/ScorePill";
 
 export function Chip({
@@ -56,14 +56,10 @@ export function PumpCard({
           backgroundColor: colors.card,
           borderColor: colors.line,
           borderWidth: 1,
-          borderRadius: 14,
+          borderRadius: shape.lg,
           padding: 14,
           gap: 6,
-          shadowColor: "#0E3A3E",
-          shadowOpacity: compact ? 0.18 : 0,
-          shadowRadius: 12,
-          shadowOffset: { width: 0, height: 6 },
-          elevation: compact ? 6 : 0,
+          ...(compact ? elevation[3] : elevation[1]),
         }}
       >
         <View

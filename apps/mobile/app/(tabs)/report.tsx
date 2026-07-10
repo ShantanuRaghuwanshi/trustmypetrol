@@ -3,7 +3,7 @@ import { FlatList, Pressable, Text, View } from "react-native";
 import { Link, router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useStore } from "@/lib/store";
-import { colors } from "@/lib/theme";
+import { colors, elevation, shape, type } from "@/lib/theme";
 import { CityChips } from "@/components/CityChips";
 
 /**
@@ -130,11 +130,12 @@ const bigAction = {
   backgroundColor: colors.card,
   borderColor: colors.line,
   borderWidth: 1,
-  borderRadius: 16,
+  borderRadius: shape.lg,
   padding: 16,
   flexDirection: "row" as const,
   alignItems: "center" as const,
   gap: 12,
+  ...elevation[1],
 };
 
 const bigIcon = {
@@ -146,8 +147,7 @@ const bigIcon = {
 };
 
 const bigTitle = {
-  fontWeight: "800" as const,
-  fontSize: 15.5,
+  ...type.titleMedium,
   color: colors.ink,
 };
 

@@ -2,7 +2,7 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { CivicStoreProvider } from "@/lib/civicStore";
 import { StoreProvider } from "@/lib/store";
-import { colors } from "@/lib/theme";
+import { m3, type } from "@/lib/theme";
 
 export default function RootLayout() {
   return (
@@ -11,9 +11,11 @@ export default function RootLayout() {
         <StatusBar style="dark" />
         <Stack
           screenOptions={{
-            headerTintColor: colors.petrol,
-            headerTitleStyle: { fontWeight: "700" },
-            contentStyle: { backgroundColor: colors.paper },
+            headerTintColor: m3.primary,
+            headerStyle: { backgroundColor: m3.surface },
+            headerShadowVisible: false,
+            headerTitleStyle: { ...type.titleLarge, color: m3.onSurface },
+            contentStyle: { backgroundColor: m3.surface },
           }}
         >
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />

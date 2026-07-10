@@ -127,6 +127,11 @@ h1,
 h2,
 h3 {
   letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
 }
 
 .container {
@@ -194,7 +199,10 @@ h3 {
 }
 
 .hero > * {
-  max-width: var(--max-w);
+  /* Align exactly with .container content: the container's max-width
+     includes its padding, so the full-bleed hero's inner column must be
+     max-w minus both gutters or text drifts left on ≥1440px viewports. */
+  max-width: calc(var(--max-w) - 2 * var(--gutter));
   margin-left: auto;
   margin-right: auto;
 }
@@ -407,7 +415,7 @@ details.panel[open] summary::after {
 }
 
 .signal-row .name {
-  width: 170px;
+  width: clamp(110px, 32%, 170px);
   flex: none;
 }
 

@@ -71,7 +71,16 @@ UI stays calm and lets the data carry the emotion.
 
 - Same palette on web (CSS vars) and mobile (`lib/theme.ts`) — one token swap
   recolours the entire product. ✅ implemented
-- Type/scale, card radii (12–16), pill chips: keep — they already read modern.
+- **Mobile follows Material Design 3** (m3.material.io): `lib/theme.ts` carries
+  the M3 tonal scheme seeded from setu blue, the MD3 type scale
+  (display→label), shape scale (4–28 px), and elevation levels 1–3 — applied
+  to the navigation bar, top app bars, and card surfaces. Hand-rolled typed
+  tokens, no runtime dependency; `react-native-paper` (the canonical M3
+  library) can be adopted later without changing the token values. ✅ implemented
+- **Web** parallels it with a fluid full-width system (max 1440 px, clamp
+  gutters), sticky glass header, full-bleed gradient hero aligned to the
+  content grid, elevation/hover card system, and automatic dark mode via
+  `prefers-color-scheme`. ✅ implemented
 - Iconography: Ionicons (mobile) stays; bridge glyph 🌉 as interim logomark —
   proper logo is an asset task (icon.png / adaptive-icon / splash / favicon).
 

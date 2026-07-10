@@ -12,7 +12,7 @@ import {
 } from "@tmp/civic";
 import { CityChips } from "@/components/CityChips";
 import { useCivicStore } from "@/lib/civicStore";
-import { colors } from "@/lib/theme";
+import { colors, elevation, shape, type } from "@/lib/theme";
 
 const agoDays = (iso: string) =>
   Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000));
@@ -32,7 +32,7 @@ function IssueRow({ issue }: { issue: CivicIssue }) {
       }
     >
       <View style={{ flex: 1 }}>
-        <Text style={{ fontWeight: "700", fontSize: 14.5, color: colors.ink }}>
+        <Text style={{ ...type.titleMedium, color: colors.ink }}>
           {def.label}
           {def.safetyCritical ? "  ⚠️" : ""}
         </Text>
@@ -139,11 +139,12 @@ const row = {
   backgroundColor: colors.card,
   borderColor: colors.line,
   borderWidth: 1,
-  borderRadius: 14,
-  padding: 13,
+  borderRadius: shape.lg,
+  padding: 14,
   flexDirection: "row" as const,
   alignItems: "center" as const,
   gap: 10,
+  ...elevation[1],
 };
 
 const pill = {

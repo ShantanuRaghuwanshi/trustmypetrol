@@ -30,7 +30,7 @@ import {
   type CivicWork,
 } from "@tmp/civic";
 import { useCivicStore } from "@/lib/civicStore";
-import { colors } from "@/lib/theme";
+import { colors, elevation, shape } from "@/lib/theme";
 
 const dateIN = (iso: string) =>
   new Date(iso).toLocaleDateString("en-IN", {
@@ -524,8 +524,9 @@ const card = {
   backgroundColor: colors.card,
   borderColor: colors.line,
   borderWidth: 1,
-  borderRadius: 14,
+  borderRadius: shape.lg,
   padding: 14,
+  ...elevation[1],
 } as const;
 
 const label = {

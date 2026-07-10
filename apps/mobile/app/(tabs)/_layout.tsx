@@ -1,15 +1,25 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { colors } from "@/lib/theme";
+import { m3, type } from "@/lib/theme";
 
+/** M3 navigation bar + top app bar (m3.material.io/components). */
 export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: colors.petrol,
-        tabBarInactiveTintColor: "#8AA0A2",
-        tabBarLabelStyle: { fontSize: 10, fontWeight: "600" },
-        headerTitleStyle: { fontWeight: "700", color: colors.ink },
+        tabBarActiveTintColor: m3.primary,
+        tabBarInactiveTintColor: m3.onSurfaceVariant,
+        tabBarLabelStyle: { ...type.labelSmall },
+        tabBarStyle: {
+          backgroundColor: m3.surfaceContainerLow,
+          borderTopColor: m3.outlineVariant,
+          height: 62,
+          paddingTop: 4,
+          paddingBottom: 8,
+        },
+        headerStyle: { backgroundColor: m3.surface },
+        headerShadowVisible: false,
+        headerTitleStyle: { ...type.titleLarge, color: m3.onSurface },
       }}
     >
       <Tabs.Screen
