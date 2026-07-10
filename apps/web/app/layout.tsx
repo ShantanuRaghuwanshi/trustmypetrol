@@ -43,8 +43,8 @@ export default function RootLayout({
               🌉 JanSetu
             </Link>
             <nav className="site-nav">
-              <Link href="/">Pumps</Link>
               <Link href="/civic">Civic</Link>
+              <Link href="/pumps">Pumps</Link>
               <Link href="/rights">Your rights</Link>
               <AuthButton />
             </nav>

@@ -16,6 +16,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const contractors = contractorScorecards(works, issues);
   return [
     { url: SITE_URL, changeFrequency: "daily", priority: 1 },
+    { url: `${SITE_URL}/pumps`, changeFrequency: "daily", priority: 0.9 },
     { url: `${SITE_URL}/civic`, changeFrequency: "daily", priority: 0.9 },
     ...CITIES.map((c) => ({
       url: `${SITE_URL}/civic/${c.name.toLowerCase()}`,
